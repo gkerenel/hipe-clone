@@ -3,63 +3,62 @@
 namespace App\Http\Controllers;
 
 use App\Models\Follow;
+use App\Models\User;
+use Illuminate\Http\Response;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class FollowController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function follow(Request $request, User $other): JsonResponse | Response
     {
-        //
+        $user = $request->user();
+
+        if ($user->id === $other->id)
+        {
+            return response()->json([
+                'errors' => ['can not follow yourself']
+            ], 422);
+        }
+
+        if ($user->isFollowing($other->id))
+        {
+            return response()->json([
+                'errors' => ['already following this user']
+            ], 401);
+        }
+
+        $follow = Follow::create([
+            'follower_id' => $user->id,
+            'following_id' => $other->id
+        ]);
+
+        return response()->noContent();
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function unfollow(Request $request, User $other): JsonResponse | Response
     {
-        //
-    }
+        $user = $request->user();
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+        if ($user->id === $other->id)
+        {
+            return response()->json([
+                'errors' => ['can not unfollow yourself']
+            ], 422);
+        }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Follow $taste)
-    {
-        //
-    }
+        if (!$user->isFollowing($other->id))
+        {
+            return response()->json([
+                'errors' => ['you are not following this user']
+            ], 401);
+        }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Follow $taste)
-    {
-        //
-    }
+        Follow::where([
+            'follower_id' => $user->id,
+            'following_id' => $other->id
+        ])->delete();
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Follow $taste)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Follow $taste)
-    {
-        //
+        return response()->noContent();
     }
 }

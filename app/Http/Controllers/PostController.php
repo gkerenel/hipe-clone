@@ -17,33 +17,17 @@ class PostController extends Controller
     public function index(Request $request) : JsonResponse
     {
         $user = $request->user();
-        $posts = $user->posts;
-//        if ($delight->public && !$gourmet->isTasting($delight->gourmet)) {
-//            return new DelightResource($delight->load('gourmet'));
-//        }
-//
-//        if ($delight->gourmet_id !== Auth::id() && !$gourmet->isTasting($delight->gourmet)) {
-//            return response()->json(['message' => 'Unauthorized'], 403);
-//        }
+        $followings_user_ids = $user->followings()->pluck('following_id');
+        $posts = Post::whereIn('user_id', $followings_user_ids)
+            ->orWhere('user_id', $user->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         return response()->json([
             'posts' => $posts,
         ]);
-//        $gourmet = Auth::user();
-//
-//        $tasting_ids = $gourmet->following()->pluck('taster_id');
-//        $tasting_ids->push($gourmet->id);
-//
-//        $delights = Post::with('gourmet')
-//            ->where(function ($query) use ($tasting_ids) {
-//                $query->whereIn('gourmet_id', $tasting_ids)
-//                    ->orWhere('public', true);
-//            })
-//            ->orderBy('created_at', 'desc')
-//            ->paginate(3);
-//
-//        return $delights;
     }
+
 
     public function store(Request $request) : JsonResponse
     {

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\FollowController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ProfileController;
@@ -40,5 +41,12 @@ Route::controller(CommentController::class)->group(function () {
         Route::post('/comment/{post}', 'store');
         Route::post('/comment/{post}/update', 'update');
         Route::post('/comment/{post}/delete', 'delete');
+    });
+});
+
+Route::controller(FollowController::class)->group(function () {
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/follow/{user}/follow', 'follow');
+        Route::post('/follow/{user}/unfollow', 'unfollow');
     });
 });
