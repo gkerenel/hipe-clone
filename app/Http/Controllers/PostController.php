@@ -7,99 +7,132 @@ use App\Http\Resources\DelightResource;
 use App\Models\Post;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class PostController extends Controller
 {
-    public function index(): LengthAwarePaginator
+    public function index(Request $request) : JsonResponse
     {
-        $gourmet = Auth::user();
+        $user = $request->user();
+        $posts = Post::where('user_id', $user->id)->get();
 
-        $tasting_ids = $gourmet->tasting()->pluck('taster_id');
-        $tasting_ids->push($gourmet->id);
+//        if ($delight->public && !$gourmet->isTasting($delight->gourmet)) {
+//            return new DelightResource($delight->load('gourmet'));
+//        }
+//
+//        if ($delight->gourmet_id !== Auth::id() && !$gourmet->isTasting($delight->gourmet)) {
+//            return response()->json(['message' => 'Unauthorized'], 403);
+//        }
 
-        $delights = Post::with('gourmet')
-            ->where(function ($query) use ($tasting_ids) {
-                $query->whereIn('gourmet_id', $tasting_ids)
-                    ->orWhere('public', true);
-            })
-            ->orderBy('created_at', 'desc')
-            ->paginate(3);
-
-        return $delights;
+        return response()->json([
+            'posts' => $posts,
+        ]);
+//        $gourmet = Auth::user();
+//
+//        $tasting_ids = $gourmet->following()->pluck('taster_id');
+//        $tasting_ids->push($gourmet->id);
+//
+//        $delights = Post::with('gourmet')
+//            ->where(function ($query) use ($tasting_ids) {
+//                $query->whereIn('gourmet_id', $tasting_ids)
+//                    ->orWhere('public', true);
+//            })
+//            ->orderBy('created_at', 'desc')
+//            ->paginate(3);
+//
+//        return $delights;
     }
 
-    public function store(Request $request)
+    public function store(Request $request) : JsonResponse
     {
+        $user = $request->user();
+
         $validator = Validator::make($request->all(), [
-            'title' => ['required', 'string', 'max:255'],
-            'content' => ['required', 'string'],
-            'public' => ['required', 'boolean'],
+            'body' => ['required', 'string'],
+            'photo' => ['nullable', 'string'],
         ]);
 
         if ($validator->fails()) {
             return response()->json([
-                'success' => false,
-                'errors' => $validator->errors()
+                'errors' => $validator->errors()->all()
             ], 422);
         }
 
-        $delight = Post::create([
-            'gourmet_id' => Auth::id(),
-            'title' => $request->title,
-            'content' => $request['content'],
-            'public' => $request->input('public', false),
+        $post = Post::create([
+            'user_id' => $user->id,
+            'body' => $request['body'],
+            'photo' => $request['photo'],
         ]);
 
-        return $delight;
+        return response()->json([
+            'post' => $post,
+        ], 201);
     }
 
-    public function show(Post $delight): DelightResource|JsonResponse
+    public function show(Request $request): JsonResponse
     {
-        $gourmet = Auth::user();
+        $user = $request->user();
+        $post = $user->posts();
 
-        if ($delight->public && !$gourmet->isTasting($delight->gourmet)) {
-            return new DelightResource($delight->load('gourmet'));
-        }
+//        if ($delight->public && !$gourmet->isTasting($delight->gourmet)) {
+//            return new DelightResource($delight->load('gourmet'));
+//        }
+//
+//        if ($delight->gourmet_id !== Auth::id() && !$gourmet->isTasting($delight->gourmet)) {
+//            return response()->json(['message' => 'Unauthorized'], 403);
+//        }
 
-        if ($delight->gourmet_id !== Auth::id() && !$gourmet->isTasting($delight->gourmet)) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
-
-        return new DelightResource($delight->load('gourmet', 'nibbles', 'eats'));
+        return response()->json([
+            'post' => $post,
+        ]);
     }
 
-    public function update(Request $request, Post $delight): DelightResource|JsonResponse
+    public function update(Request $request, Post $post): JsonResponse
     {
-        if ($delight->gourmet_id !== Auth::id()) {
-            return response()->json(['message' => 'Unauthorized'], 403);
+        $user = $request->user();
+
+        if ($post->user_id !== $user->id) {
+            return response()->json([
+                'errors' => ['you do not own post']
+            ], 403);
         }
 
-        $request->validate([
-            'title' => 'string|max:255',
-            'content' => 'string',
-            'public' => 'boolean',
+        $validator = Validator::make($request->all(), [
+            'body' => ['nullable', 'string'],
+            'photo' => ['nullable', 'string'],
         ]);
 
-        $delight->update($request->only('title', 'content', 'public'));
-
-        return new DelightResource($delight->load('gourmet'));
-    }
-
-    public function destroy(Post $delight): JsonResponse
-    {
-        if ($delight->gourmet_id !== Auth::id()) {
-            return response()->json(['message' => 'Unauthorized'], 403);
+        if ($validator->fails()) {
+            return response()->json([
+                'errors' => $validator->errors()->all()
+            ], 422);
         }
 
-        $delight->delete();
+        $post->update($request->only('body', 'photo'));
 
-        return response()->json(['message' => 'Delight deleted']);
+        return response()->json([
+            'post' => $post,
+        ]);
     }
 
-    public function eat(Post $delight): DelightResource|JsonResponse
+    public function delete(Request $request, Post $post): JsonResponse | Response
+    {
+        $user = $request->user();
+
+        if ($post->user_id !== $user->id) {
+            return response()->json([
+                'errors' => ['you do not own post']
+            ], 403);
+        }
+
+        $post->delete();
+        return response()->noContent();
+    }
+
+    public function like(Post $delight): DelightResource|JsonResponse
     {
         $gourmet = Auth::user();
 
@@ -116,7 +149,7 @@ class PostController extends Controller
         return new DelightResource($delight->load('gourmet', 'eats'));
     }
 
-    public function spit(Post $delight): DelightResource|JsonResponse
+    public function unlike(Post $delight): DelightResource|JsonResponse
     {
         $gourmet = Auth::user();
         if ($delight->public && !$gourmet->isTasting($delight->gourmet)) {

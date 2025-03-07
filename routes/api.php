@@ -17,8 +17,8 @@ Route::controller(AuthController::class)->group(function () {
 Route::controller(ProfileController::class)->group(function () {
    Route::middleware('auth:sanctum')->group(function () {
        Route::get('/user/profile', 'show');
-       Route::post('/user/update', 'update');
-       Route::post('/user/update/password', 'updatePassword');
+       Route::post('/user/profile', 'update');
+       Route::post('/user/profile/password', 'updatePassword');
    });
 });
 
@@ -26,8 +26,8 @@ Route::controller(PostController::class)->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/post', 'index');
         Route::post('/post', 'store');
-        Route::post('/post/update', 'update');
-        Route::post('/post/delete', 'delete');
+        Route::post('/post/{post}/update', 'update');
+        Route::post('/post/{post}/delete', 'delete');
 
         Route::post('/post/{post}/like', 'like');
         Route::post('/post/{post}/unlike', 'unlike');

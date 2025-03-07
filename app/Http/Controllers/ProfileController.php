@@ -2,60 +2,74 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class ProfileController extends Controller
 {
-    public function show(): JsonResponse
+    public function show(Request $request): JsonResponse
     {
-        return response()->json(Auth::user());
+        return response()->json([
+            'user' => $request->user()
+        ]);
     }
 
     public function update(Request $request): JsonResponse
     {
-        $user = Auth::user();
+        $user = $request->user();
 
         $validator = Validator::make($request->all(), [
-            'name' => 'string|max:255',
-            'username' => 'string|max:255|unique:gourmets,username,' . $user->id,
-            'email' => 'string|email|max:255|unique:gourmets,email,' . $user->id,
-            'bio' => 'nullable|string',
-            'photo' => 'nullable|string',
+            'name' => ['nullable', 'string', 'max:255'],
+            'username' => ['nullable', 'string', 'max:255', 'unique:users,username,' . $user->id],
+            'email' => ['nullable', 'string', 'max:255', 'unique:users,email,' . $user->id],
+            'bio' => ['nullable', 'string'],
+            'photo' => ['nullable', 'string'],
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+            return response()->json([
+                'errors' => $validator->errors()->all()
+            ],
+                422);
         }
 
         $user->update($request->only('name', 'username', 'email', 'bio', 'photo'));
-
-        return response()->json($user);
+        return response()->json([
+            'user' => $user
+        ]);
     }
 
-    public function updatePassword(Request $request): JsonResponse
+    public function updatePassword(Request $request): JsonResponse | Response
     {
-        $user = Auth::user();
+        $user = $request->user();
 
         $validator = Validator::make($request->all(), [
-            'current_password' => 'required|string',
-            'new_password' => 'required|string|min:8|confirmed',
+            'current' => ['required', 'string', 'min:8', 'max:255'],
+            'new' => ['required', 'string', 'min:8', 'max:255', 'confirmed'],
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+            return response()->json([
+                'errors' => $validator->errors()->all()
+            ], 422);
         }
 
-        if (!Hash::check($request->current_password, $user->password)) {
-            return response()->json(['message' => 'Invalid current password'], 401);
+        if (!Hash::check($request['current'], $user->password)) {
+            return response()->json([
+                'errors' => ['invalid current password']
+            ], 401);
         }
 
-        $user->update(['password' => Hash::make($request->new_password)]);
-        return response()->json(['message' => 'Password updated successfully']);
+        if ($request['current'] == $request['new']) {
+            return response()->json([
+                'errors' => ['current password cannot be same as new password']
+            ], 401);
+        }
+
+        $user->update(['password' => Hash::make($request['new'])]);
+        return response()->noContent();
     }
 }
