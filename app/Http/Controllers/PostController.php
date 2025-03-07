@@ -17,8 +17,7 @@ class PostController extends Controller
     public function index(Request $request) : JsonResponse
     {
         $user = $request->user();
-        $posts = Post::where('user_id', $user->id)->get();
-
+        $posts = $user->posts;
 //        if ($delight->public && !$gourmet->isTasting($delight->gourmet)) {
 //            return new DelightResource($delight->load('gourmet'));
 //        }
@@ -132,38 +131,45 @@ class PostController extends Controller
         return response()->noContent();
     }
 
-    public function like(Post $delight): DelightResource|JsonResponse
+    public function like(Request $request, Post $post): JsonResponse | Response
     {
-        $gourmet = Auth::user();
+        $user = $request->user();
 
-        if ($delight->public && !$gourmet->isTasting($delight->gourmet)) {
-            return response()->json(['message' => 'Cannot eat public posts'], 403);
+        if (!$user->isFollowing($post->user)) {
+            return response()->json([
+                'errors' => ['you are not following this post user']
+            ], 403);
         }
 
-        if ($delight->isEatenBy($gourmet->id)) {
-            return response()->json(['message' => 'Delight already eaten'], 400);
+        if ($post->isLikeBy($user->id)) {
+            return response()->json([
+                'errors' => 'you already like post'], 400
+            );
         }
 
-        $delight->eats()->create(['gourmet_id' => $gourmet->id]);
-
-        return new DelightResource($delight->load('gourmet', 'eats'));
+        $post->likes()->create(['user_id' => $user->id]);
+        return response()->noContent();
     }
 
-    public function unlike(Post $delight): DelightResource|JsonResponse
+    public function unlike(Request $request, Post $post): JsonResponse | Response
     {
-        $gourmet = Auth::user();
-        if ($delight->public && !$gourmet->isTasting($delight->gourmet)) {
-            return response()->json(['message' => 'Cannot uneat public posts'], 403);
+        $user = $request->user();
+
+        if (!$user->isFollowing($post->user)) {
+            return response()->json([
+                'errors' => ['you are not following this post user']
+            ], 403);
         }
 
-        $eat = $delight->eats()->where('gourmet_id', $gourmet->id)->first();
+        $like = $post->likes()->where('user_id', $user->id)->first();
 
-        if (!$eat) {
-            return response()->json(['message' => 'Delight not eaten'], 400);
+        if (!$like) {
+            return response()->json([
+                'errors' => ['you are did not like this post'],
+            ], 400);
         }
 
-        $eat->delete();
-
-        return new DelightResource($delight->load('gourmet', 'eats'));
+        $like->delete();
+        return response()->noContent();
     }
 }
