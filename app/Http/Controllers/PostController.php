@@ -11,7 +11,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
-class DelightController extends Controller
+class PostController extends Controller
 {
     public function index(): LengthAwarePaginator
     {

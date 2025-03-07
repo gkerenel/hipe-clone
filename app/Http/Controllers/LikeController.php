@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Follow;
+use App\Models\Like;
 use Illuminate\Http\Request;
 
-class TasteController extends Controller
+class LikeController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -34,7 +34,7 @@ class TasteController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Follow $taste)
+    public function show(Like $eat)
     {
         //
     }
@@ -42,7 +42,7 @@ class TasteController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Follow $taste)
+    public function edit(Like $eat)
     {
         //
     }
@@ -50,7 +50,7 @@ class TasteController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Follow $taste)
+    public function update(Request $request, Like $eat)
     {
         //
     }
@@ -58,7 +58,7 @@ class TasteController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Follow $taste)
+    public function destroy(Like $eat)
     {
         //
     }
