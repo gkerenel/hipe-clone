@@ -13,7 +13,7 @@ class ProfileController extends Controller
     public function show(Request $request): JsonResponse
     {
         return response()->json([
-            'user' => $request->user()
+            'user' => $request->user()->loadCount(['followers', 'followings'])
         ]);
     }
 

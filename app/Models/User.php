@@ -6,12 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Collection;
 use Laravel\Sanctum\HasApiTokens;
 
 
 /**
  * @method static create(array $array)
  * @method static where(string $string, mixed $username)
+ * @method static inRandomOrder()
  */
 class User extends Authenticatable
 {
@@ -27,16 +29,17 @@ class User extends Authenticatable
     ];
 
     protected $hidden = [
-        'id',
         'password',
         'remember_token',
         'created_at',
-        'updated_at',
     ];
 
-    public function posts(): HasMany
+    public function posts() : Collection
     {
-        return $this->hasMany(Post::class, 'user_id');
+        $followings_user_ids = $this->followings()->pluck('following_id');
+        return Post::whereIn('user_id', $followings_user_ids)
+            ->orWhere('user_id', $this->id)
+            ->orderBy('created_at', 'desc');
     }
 
     public function comments(): HasMany

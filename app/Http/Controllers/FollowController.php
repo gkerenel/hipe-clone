@@ -13,6 +13,8 @@ class FollowController extends Controller
     public function follow(Request $request, User $other): JsonResponse | Response
     {
         $user = $request->user();
+        logger('checking follow have:');
+        logger(var_export($other, true));
 
         if ($user->id === $other->id)
         {

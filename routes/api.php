@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FollowController;
+use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ProfileController;
@@ -10,6 +11,7 @@ use Illuminate\Support\Facades\Route;
 Route::controller(AuthController::class)->group(function () {
     Route::post('/auth/signup','signup');
     Route::post('/auth/signin', 'signin');
+
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/auth/signout', 'signout');
     });
@@ -29,9 +31,13 @@ Route::controller(PostController::class)->group(function () {
         Route::post('/post', 'store');
         Route::post('/post/{post}/update', 'update');
         Route::post('/post/{post}/delete', 'delete');
+    });
+});
 
-        Route::post('/post/{post}/like', 'like');
-        Route::post('/post/{post}/unlike', 'unlike');
+Route::controller(LikeController::class)->group(function () {
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/like/{post}/like', 'like');
+        Route::post('/like/{post}/unlike', 'unlike');
     });
 });
 

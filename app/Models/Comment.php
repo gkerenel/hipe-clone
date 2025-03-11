@@ -18,10 +18,8 @@ class Comment extends Model
     ];
 
     protected $hidden = [
-        'user_id',
-        'post_id',
-        'id',
         'updated_at',
+        'created_at'
     ];
 
     public function post(): BelongsTo

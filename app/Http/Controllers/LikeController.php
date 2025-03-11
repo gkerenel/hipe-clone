@@ -3,63 +3,52 @@
 namespace App\Http\Controllers;
 
 use App\Models\Like;
+use App\Models\Post;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class LikeController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function like(Request $request, Post $post): JsonResponse | Response
     {
-        //
+        $user = $request->user();
+
+        if ($post->isLikeBy($user->id)) {
+            return response()->json([
+                'errors' => 'you already like post'], 400
+            );
+        }
+
+        if (!$user->isFollowing($post->user) && !($user->id == $post->user->id)) {
+            return response()->json([
+                'errors' => ['you are not following this post user']
+            ], 403);
+        }
+
+        $post->likes()->create(['user_id' => $user->id]);
+        return response()->noContent();
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function unlike(Request $request, Post $post): JsonResponse | Response
     {
-        //
-    }
+        $user = $request->user();
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+        if (!$user->isFollowing($post->user) || $user->id != $post->user->id) {
+            return response()->json([
+                'errors' => ['you are not following this post user']
+            ], 403);
+        }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Like $eat)
-    {
-        //
-    }
+        $like = $post->likes()->where('user_id', $user->id)->first();
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Like $eat)
-    {
-        //
-    }
+        if (!$like) {
+            return response()->json([
+                'errors' => ['you are did not like this post'],
+            ], 400);
+        }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Like $eat)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Like $eat)
-    {
-        //
+        $like->delete();
+        return response()->noContent();
     }
 }

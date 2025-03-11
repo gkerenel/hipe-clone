@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Symfony\Component\Uid\Uuid;
 
 /**
  * @method static whereIn(string $string, $followings_user_ids)
@@ -21,14 +22,13 @@ class Post extends Model
     ];
 
     protected $hidden = [
-        'user_id',
-        'id',
         'updated_at',
+        'created_at',
     ];
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function comments(): HasMany
@@ -41,7 +41,7 @@ class Post extends Model
         return $this->hasMany(Like::class);
     }
 
-    public function isLikeBy(int $user_id): bool
+    public function isLikeBy($user_id): bool
     {
         return $this->likes()->where('user_id', $user_id)->exists();
     }
