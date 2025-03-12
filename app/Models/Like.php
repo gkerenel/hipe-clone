@@ -15,6 +15,8 @@ class Like extends Model
     ];
 
     protected $hidden = [
+        'user_id',
+        'post_id',
         'created_at',
         'updated_at',
     ];

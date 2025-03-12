@@ -22,13 +22,12 @@ class Post extends Model
     ];
 
     protected $hidden = [
-        'updated_at',
         'created_at',
     ];
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class);
     }
 
     public function comments(): HasMany
