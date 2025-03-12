@@ -2,14 +2,11 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
+Route::get('/', function () {
+    return view('layout');
 });
 
-Route::get('/signin', function () {
-    return view('signin');
-});
+Route::get('/{vue_capture?}', function () {
+    return view('layout');
+})->where('vue_capture', '[\/\w\.-]*');
 
-Route::get('/signup', function () {
-    return view('signup');
-});
