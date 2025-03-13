@@ -12,6 +12,7 @@
 		"tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
 
 		"module": "ESNext",
+        "lib": ["es2015"],
 		"moduleResolution": "Bundler",
 		"types": ["node"]
 	}

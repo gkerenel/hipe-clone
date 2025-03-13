@@ -9,19 +9,19 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::controller(AuthController::class)->group(function () {
-    Route::post('/auth/signup','signup');
-    Route::post('/auth/signin', 'signin');
+    Route::post('/signup','signup');
+    Route::post('/signin', 'signin');
 
     Route::middleware('auth:sanctum')->group(function () {
-        Route::post('/auth/signout', 'signout');
+        Route::post('/signout', 'signout');
     });
 });
 
 Route::controller(ProfileController::class)->group(function () {
    Route::middleware('auth:sanctum')->group(function () {
-       Route::get('/user/profile', 'show');
-       Route::post('/user/profile', 'update');
-       Route::post('/user/profile/password', 'updatePassword');
+       Route::get('/profile', 'show');
+       Route::post('/profile', 'update');
+       Route::post('/profile/password', 'updatePassword');
    });
 });
 

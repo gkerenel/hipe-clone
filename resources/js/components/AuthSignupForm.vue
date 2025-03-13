@@ -1,43 +1,37 @@
 <script setup lang="ts">
-	import axios from 'axios'
-	import { ref } from 'vue'
-	import { useAuthStore } from '@/stores/auth.ts'
-	import router from '@/router'
+    import { ref } from 'vue'
+    import { useAuthStore } from '@/stores/auth'
+    import { authSignUp } from '@/services/api/auth'
 
-	const username = ref('')
-	const email = ref('')
-	const password = ref('')
-	const error = ref('')
-	const submit = ref(false)
+    const username = ref('')
+    const email = ref('')
+    const password = ref('')
+    const errors = ref('')
+    const errors_show = ref(false)
+    const submit = ref(false)
 
-	async function onSubmit() {
-		submit.value = true
+    async function onSubmit() {
+        submit.value = true
 
-		axios.post('http://127.0.0.1:8000/api/auth/signup', {
-			username: username.value,
-			email: email.value,
-			password: password.value
-		})
-			.then(response => {
-				const auth = useAuthStore()
-				if (response.data.token) {
-					auth.setToken(response.data.token)
-					router.push('/dashboard')
-				}
-				password.value = ''
-				error.value = 'this is a feature not an error [check you network settings](mostly client side error)'
-				submit.value = false
-			})
-			.catch((reason) => {
-				const errors = reason.response?.data?.errors
-				error.value = errors?.join('\n')
-				console.log(errors)
-				submit.value = false
-			})
-	}
+        const response = await authSignUp(username.value, email.value, password.value)
+
+        if (response.success) {
+            useAuthStore().set(response.token)
+            this.$router.push('/dashboard')
+        }
+        else {
+            errors_show.value = true
+            errors.value = response.error.join('\n')
+            password.value = ''
+            submit.value = false
+        }
+    }
 </script>
 
 <template>
+    <div v-show="errors_show" class="bg-red-400 w-full text-white font-bold">
+        {{ errors }}
+    </div>
 	<form class="space-y-6" @submit.prevent="onSubmit">
 		<div>
 			<label class="block text-sm font-medium text-gray-700 mb-2">Username</label>
