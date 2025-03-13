@@ -24,14 +24,15 @@
             errors.value = response.error.join('\n')
             password.value = ''
             submit.value = false
+            setTimeout(() => {
+                errors_show.value = false
+            }, 20000)
         }
     }
 </script>
 
 <template>
-    <div v-show="errors_show" class="bg-red-400 w-full text-white font-bold">
-        {{ errors }}
-    </div>
+    <pre v-show="errors_show" class="bg-red-400 w-full text-white p-2 mb-2">{{ errors }}</pre>
 	<form class="space-y-6" @submit.prevent="onSubmit">
 		<div>
 			<label class="block text-sm font-medium text-gray-700 mb-2">Username</label>
