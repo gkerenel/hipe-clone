@@ -10,6 +10,14 @@
     const errors_show = ref(false)
 	const submit = ref(false)
 
+    function showError(error) {
+        errors_show.value = true
+        errors.value = error.join('\n')
+        setTimeout(() => {
+            errors_show.value = false
+        }, 20000)
+    }
+
 	async function onSubmit() {
 		submit.value = true
 
@@ -20,13 +28,9 @@
             await router.push('/dashboard')
         }
         else {
-            errors_show.value = true
-            errors.value = response.error.join('\n')
             password.value = ''
             submit.value = false
-            setTimeout(() => {
-                errors_show.value = false
-            }, 20000)
+            showError(response.error)
         }
 	}
 </script>

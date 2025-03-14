@@ -1,8 +1,8 @@
 <script setup lang="ts">
-	import axios from 'axios'
 	import { onMounted, ref, reactive } from 'vue'
-	import router from '@/router'
-	import { useAuthStore } from '@/stores/auth.ts'
+    import { useAuthStore } from '@/stores/auth.ts'
+    import {profileInfo, profileUpdate} from '@/services/api/profile'
+    import router from "@/router";
 
 	const user = reactive({
 		name: '',
@@ -10,6 +10,9 @@
 		email: '',
 		bio: ''
 	})
+
+    const errors = ref('')
+    const errors_show = ref(false)
 
 	const MAX_BIO_LENGTH = 255
 	const auth = useAuthStore()
@@ -23,45 +26,44 @@
 		remaining.value = MAX_BIO_LENGTH - user.bio.length;
 	}
 
-	async function onSubmit() {
-		const form_data = {
-            name: user.name,
-            username: user.username,
-            email: user.email,
-            bio: user.bio,
-        }
+    function showError(error) {
+        errors_show.value = true
+        errors.value = error.join('\n')
+        setTimeout(() => {
+            errors_show.value = false
+        }, 20000)
+    }
 
-		axios.post('http://127.0.0.1:8000/api/user/profile', form_data, {
-			headers: {
-				'Authorization': `Bearer ${auth.getToken()}`
-			},
-		})
-		.then(() => {
-			router.push('/dashboard/profile')
-		})
-		.catch(() => {
-		})
+	async function onSubmit() {
+		const token = useAuthStore().get()
+        const response = await profileUpdate(token, user.name, user.username, user.email, user.bio)
+
+        if (response.success) {
+            await router.push('/dashboard/profile')
+        }
+        else {
+            showError(response.error)
+        }
 	}
 
-	onMounted(() => {
-		axios.get('http://127.0.0.1:8000/api/user/profile', {
-				headers: {
-					'Authorization': `Bearer ${auth.getToken()}`
-				}
-		})
-		.then(async (response) => {
-			const user_data = response.data.user;
-			console.log(user_data)
-			user.name = user_data?.name ?? ''
-			user.username = user_data?.username ?? ''
-			user.email = user_data?.email ?? ''
-			user.bio = user_data?.bio ?? ''
-			onBioInput()
-		})
-		.catch((error) => {
-			console.error('Error loading user data:', error.response)
-		})
-	})
+    onMounted(async () => {
+        const token = useAuthStore().get()
+        const response = await profileInfo(token)
+
+        if (response.success) {
+            user.value = response.user
+        }
+        else {
+            user.value = {
+                name: "John Doe",
+                username: "John Doe",
+                email: "jane.doe@example.com",
+                bio: 'this is error data',
+            }
+        }
+
+        console.log(user.value)
+    })
 </script>
 
 
@@ -80,22 +82,7 @@
 				<button @click="onSubmit" class="bg-white text-black cursor-pointer px-4 py-2 rounded-full font-bold hover:bg-gray-200">Save</button>
 			</div>
 			<div class="space-y-6">
-				<div class="bg-center bg-cover C bg-no-repeat relative h-48 bg-gray-200 rounded-xl">
-					<input  type="file" id="cover" class="hidden" accept="image/*" />
-					<label for="cover" class="absolute inset-0 flex items-center justify-center bg-white opacity-0 hover:opacity-100 transition cursor-pointer">
-						<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
-						</svg>
-					</label>
-				</div>
-				<div class="relative -mt-16 ml-4 w-fit">
-					<div class="w-20 h-20 rounded-full border-4 border-white bg-gray-500 flex items-center justify-center">
-                        <span class="text-white font-bold text-xl">
-                            {{ user.name.split(' ').map(n => n[0]).join('') }}
-                        </span>
-					</div>
-				</div>
+                <pre v-show="errors_show" class="bg-red-400 w-full text-white p-2 mb-2">{{ errors }}</pre>
 				<div class="space-y-6 p-2">
 					<div class="bg-gray-200 p-4 rounded-xl">
 						<label class="block text-sm font-medium text-gray-500 mb-2">Name</label>

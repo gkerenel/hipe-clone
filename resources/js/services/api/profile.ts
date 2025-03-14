@@ -16,7 +16,7 @@ export const profileInfo = async (token) => {
     })
 }
 
-export const profileUpdate = async (name, username, email, bio) => {
+export const profileUpdate = async (token, name, username, email, bio) => {
     return axios.post(`${BASE_URL}/profile`, {
             name, username, email, bio
         },{
@@ -32,7 +32,7 @@ export const profileUpdate = async (name, username, email, bio) => {
     })
 }
 
-export const profileUpdatePassword = async (current, password_new, password_new_confirmation) => {
+export const profileUpdatePassword = async (token, current, password_new, password_new_confirmation) => {
     return axios.post(`${BASE_URL}/profile/password`, {
         current, password_new, password_new_confirmation
     },{

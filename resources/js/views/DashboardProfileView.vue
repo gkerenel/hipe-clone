@@ -1,5 +1,4 @@
 <script setup lang="ts">
-	import axios from 'axios'
 	import { onMounted, ref } from 'vue'
 	import router from '@/router'
 	import { useAuthStore } from '@/stores/auth.ts'
@@ -42,8 +41,6 @@
                 followings_count: -1
             }
         }
-
-        console.log(response)
 	})
 </script>
 
