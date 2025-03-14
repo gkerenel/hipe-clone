@@ -33,7 +33,7 @@ const router = createRouter({
 			component: () => import('@/views/DashboardView.vue'),
 			beforeEnter: (to, from, next) => {
 				const auth = useAuthStore()
-				if (auth.isAuthenticated()) {
+				if (auth.get()) {
 					next()
 				}
 				else {

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 	import { ref } from 'vue'
+    import router from '@/router'
     import { useAuthStore } from '@/stores/auth'
     import { authSignIn } from '@/services/api/auth'
 
@@ -12,11 +13,11 @@
 	async function onSubmit() {
 		submit.value = true
 
-        const response = await authSignIn(this.username, this.password)
+        const response = await authSignIn(username.value, password.value)
 
         if (response.success) {
             useAuthStore().set(response.token)
-            this.$router.push('/dashboard')
+            await router.push('/dashboard')
         }
         else {
             errors_show.value = true

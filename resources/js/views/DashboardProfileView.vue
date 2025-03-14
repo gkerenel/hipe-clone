@@ -3,7 +3,7 @@
 	import { onMounted, ref } from 'vue'
 	import router from '@/router'
 	import { useAuthStore } from '@/stores/auth.ts'
-
+    import { profileInfo } from '@/services/api/profile'
 	interface User {
 		name: string;
 		username: string;
@@ -12,41 +12,38 @@
 		followers_count: number;
 		followings_count: number;
 	}
+    function getRandomColor() {
+        const letters = "0123456789ABCDEF"
+        let color = "#"
+
+        for (let i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)]
+        }
+        return color
+    }
 
     const posts = ref()
-
-	const auth = useAuthStore()
 	const user = ref<User | null>()
 
-	onMounted(() => {
-		axios.get('http://127.0.0.1:8000/api/user/profile', {
-			headers: {
-				'Authorization': `Bearer ${auth.getToken()}`,
-			}
-		})
-		.then((response) => {
-			user.value = response.data.user
-		})
-		.catch((error) => {
-			console.log(error.response)
-		})
+	onMounted(async () => {
+        const token = useAuthStore().get()
+        const response = await profileInfo(token)
 
-        axios.get('http://127.0.0.1:8000/api/post', {
-            headers: {
-                'Authorization': `Bearer ${auth.getToken()}`,
+        if (response.success) {
+            user.value = response.user
+        }
+        else {
+            user.value = {
+                name: "John Doe",
+                username: "John Doe",
+                email: "jane.doe@example.com",
+                bio: 'this is error data',
+                followers_count: -1,
+                followings_count: -1
             }
-        })
-            .then((response) => {
-                if (response.data.posts.length == 0) {
-                    post.value = 'posts will go here'
-                }
-                else {
-                    posts.value = response.data.posts
-                }
-            })
-            .catch((error) => {
-                console.log(error.response)
-            })
+        }
+
+        console.log(response)
 	})
 </script>
 
@@ -54,9 +51,9 @@
 	<main class="flex-1 p-8">
 		<div class="bg-white shadow rounded-lg">
 			<div class="relative">
-				<div class="w-full h-48 bg-gray-300 rounded-t-lg"></div>
+				<div :style="{backgroundColor: getRandomColor()}" class="w-full h-48  rounded-t-lg"></div>
 				<div class="absolute left-6 bottom-[-32px]">
-					<div class="w-20 h-20 rounded-full border-4 border-white bg-gray-500 flex items-center justify-center">
+					<div :style="{backgroundColor: getRandomColor()}" class="w-20 h-20 rounded-full border-4 border-white flex items-center justify-center">
                         <span class="text-white font-bold text-xl">
                             {{ user?.name?.split(' ').map(n => n[0]).join('') }}
                         </span>
