@@ -24,7 +24,7 @@ class ProfileController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => ['nullable', 'string'],
             'username' => ['nullable', 'string', 'unique:users,username,' . $user->id],
-            'email' => ['nullable', 'string', 'unique:users,email,' . $user->id],
+            'email' => ['nullable', 'email', 'unique:users,email,' . $user->id],
             'bio' => ['nullable', 'string'],
             'photo' => ['nullable', 'string'],
         ]);

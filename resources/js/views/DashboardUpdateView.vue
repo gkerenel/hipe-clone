@@ -51,18 +51,17 @@
         const response = await profileInfo(token)
 
         if (response.success) {
-            user.value = response.user
+            user.name = response.user.name
+            user.username = response.user.username
+            user.email = response.user.email
+            user.bio = response.user.bio
         }
         else {
-            user.value = {
-                name: "John Doe",
-                username: "John Doe",
-                email: "jane.doe@example.com",
-                bio: 'this is error data',
-            }
+            user.name = "John Doe"
+            user.username = "John Doe"
+            user.email = "jane.doe@example.com"
+            user.bio = "this is error data"
         }
-
-        console.log(user.value)
     })
 </script>
 
