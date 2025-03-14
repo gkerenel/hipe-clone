@@ -24,7 +24,6 @@ class PostController extends Controller
 
         $validator = Validator::make($request->all(), [
             'body' => ['required', 'string'],
-            'photo' => ['nullable', 'string'],
         ]);
 
         if ($validator->fails()) {
@@ -36,7 +35,6 @@ class PostController extends Controller
         $post = Post::create([
             'user_id' => $user->id,
             'body' => $request['body'],
-            'photo' => $request['photo'],
         ]);
 
         return response()->json([
