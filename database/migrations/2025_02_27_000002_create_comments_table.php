@@ -13,7 +13,6 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('post_id')->constrained('posts')->onDelete('cascade')->onUpdate('cascade');
             $table->text('body');
-            $table->longText('photo')->nullable();
             $table->timestamps();
         });
     }

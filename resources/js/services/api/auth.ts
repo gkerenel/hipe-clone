@@ -2,6 +2,20 @@ import axios from 'axios'
 
 const BASE_URL = 'http://127.0.0.1:8000/api'
 
+export const authTest = async (token) => {
+    return axios.get(`${BASE_URL}/test`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    }).
+    then(() => {
+        return true
+    })
+    .catch(() => {
+        return false
+    })
+}
+
 export const authSignIn = async (username, password) => {
     return axios.post(`${BASE_URL}/signin`,  {
         username: username,

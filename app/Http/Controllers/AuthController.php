@@ -12,6 +12,10 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
+    public function test(): Response
+    {
+        return response()->noContent();
+    }
     public function signup(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [

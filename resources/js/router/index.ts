@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { infoRoutes } from '@/router/info.ts';
 import { dashboardRoutes } from '@/router/dashboard.ts';
 import { useAuthStore } from '@/stores/auth.ts';
+import {authTest} from "@/services/api/auth";
 
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
@@ -31,18 +32,23 @@ const router = createRouter({
 			path: '/dashboard',
 			name: 'dashboard',
 			component: () => import('@/views/DashboardView.vue'),
-			beforeEnter: (to, from, next) => {
-				const auth = useAuthStore()
-				if (auth.get()) {
-					next()
-				}
-				else {
-					next('/signin')
-				}
-			},
+            meta: { requiresAuth: true },
 			children: dashboardRoutes
 		}
 	],
+})
+
+router.beforeEach(async (to, from, next) => {
+    const token = useAuthStore()
+    const is_auth = await authTest(token)
+
+    if (to.meta.requiresAuth && !is_auth) {
+        next('/')
+    }
+    else {
+        next()
+    }
+
 })
 
 export default router

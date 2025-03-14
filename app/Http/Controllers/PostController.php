@@ -18,7 +18,7 @@ class PostController extends Controller
         ]);
     }
 
-    public function store(Request $request) : JsonResponse
+    public function store(Request $request) : JsonResponse | Response
     {
         $user = $request->user();
 
@@ -32,27 +32,15 @@ class PostController extends Controller
             ], 422);
         }
 
-        $post = Post::create([
+        Post::create([
             'user_id' => $user->id,
             'body' => $request['body'],
         ]);
 
-        return response()->json([
-            'post' => $post,
-        ], 201);
+        return response()->noContent();
     }
 
-    public function show(Request $request): JsonResponse
-    {
-        $user = $request->user();
-        $post = $user->posts()->withCounts(['likes']);
-
-        return response()->json([
-            'post' => $post,
-        ]);
-    }
-
-    public function update(Request $request, Post $post): JsonResponse
+    public function update(Request $request, Post $post): JsonResponse | Response
     {
         $user = $request->user();
 
@@ -64,7 +52,6 @@ class PostController extends Controller
 
         $validator = Validator::make($request->all(), [
             'body' => ['nullable', 'string'],
-            'photo' => ['nullable', 'string'],
         ]);
 
         if ($validator->fails()) {
@@ -73,18 +60,15 @@ class PostController extends Controller
             ], 422);
         }
 
-        $post->update($request->only('body', 'photo'));
-
-        return response()->json([
-            'post' => $post,
-        ]);
+        $post->update($request->only('body'));
+        return response()->noContent();
     }
 
     public function delete(Request $request, Post $post): JsonResponse | Response
     {
         $user = $request->user();
 
-        if ($post->user_id !== $user->id) {
+        if ($post->user()->id != $user->id) {
             return response()->json([
                 'errors' => ['you do not own post']
             ], 403);

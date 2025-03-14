@@ -24,7 +24,7 @@
 
         if (response.success) {
             useAuthStore().set(response.token)
-            this.$router.push('/dashboard')
+            await router.push('/dashboard')
         }
         else {
             password.value = ''

@@ -10,6 +10,7 @@ use Symfony\Component\Uid\Uuid;
 
 /**
  * @method static whereIn(string $string, $followings_user_ids)
+ * @method static create(array $array)
  */
 class Post extends Model
 {
@@ -18,7 +19,6 @@ class Post extends Model
     protected $fillable = [
         'user_id',
         'body',
-        'photo',
     ];
 
     protected $hidden = [
