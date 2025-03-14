@@ -48,7 +48,7 @@ class ProfileController extends Controller
 
         $validator = Validator::make($request->all(), [
             'current' => ['required', 'string', 'min:8', 'max:255'],
-            'new' => ['required', 'string', 'min:8', 'max:255', 'confirmed'],
+            'password_new' => ['required', 'string', 'min:8', 'max:255', 'confirmed'],
         ]);
 
         if ($validator->fails()) {
@@ -63,13 +63,13 @@ class ProfileController extends Controller
             ], 401);
         }
 
-        if ($request['current'] == $request['new']) {
+        if ($request['current'] == $request['password_new']) {
             return response()->json([
                 'errors' => ['current password cannot be same as new password']
             ], 401);
         }
 
-        $user->update(['password' => Hash::make($request['new'])]);
+        $user->update(['password' => Hash::make($request['password_new'])]);
         return response()->noContent();
     }
 }

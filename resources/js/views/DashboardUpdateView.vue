@@ -79,6 +79,7 @@
 					</button>
 					<h1 class="text-xl font-bold">Edit Profile</h1>
 				</div>
+                <button @click="router.push('/dashboard/update/password')" class="bg-black text-white cursor-pointer px-4 py-2 rounded-full font-bold hover:text-black hover:bg-gray-200">Edit Password</button>
 				<button @click="onSubmit" class="bg-white text-black cursor-pointer px-4 py-2 rounded-full font-bold hover:bg-gray-200">Save</button>
 			</div>
 			<div class="space-y-6">
