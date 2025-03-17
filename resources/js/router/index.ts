@@ -32,23 +32,9 @@ const router = createRouter({
 			path: '/dashboard',
 			name: 'dashboard',
 			component: () => import('@/views/DashboardView.vue'),
-            meta: { requiresAuth: true },
 			children: dashboardRoutes
 		}
 	],
-})
-
-router.beforeEach(async (to, from, next) => {
-    const token = useAuthStore()
-    const is_auth = await authTest(token)
-
-    if (to.meta.requiresAuth && !is_auth) {
-        next('/')
-    }
-    else {
-        next()
-    }
-
 })
 
 export default router

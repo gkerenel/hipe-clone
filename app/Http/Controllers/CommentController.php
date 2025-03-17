@@ -8,30 +8,16 @@ use App\Models\Post;
 use App\Models\Comment;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
 class CommentController extends Controller
 {
-    public function index(Post $delight): NibbleCollection|JsonResponse
+    public function store(Request $request, Post $post): Response
     {
-        $gourmet = Auth::user();
+        $user = $request->user();
 
-        if ($delight->public && !$gourmet->isTasting($delight->gourmet)) {
-            return response()->json(['message' => 'Nibbles are disabled on public delights'], 403);
-        }
-
-        if ($delight->gourmet_id !== Auth::id() && !$gourmet->isTasting($delight->gourmet)) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
-
-        return new NibbleCollection($delight->nibbles()->with('gourmet')->paginate(10));
-    }
-
-    public function store(Request $request, Post $delight): JsonResponse|NibbleResource
-    {
-        $gourmet = Auth::user();
-
-        if ($delight->public && !$gourmet->isTasting($delight->gourmet)) {
+        if ($post->public && !$gourmet->isTasting($post->gourmet)) {
             return response()->json(['message' => 'Nibbles are disabled on public delights'], 403);
         }
 
@@ -39,7 +25,7 @@ class CommentController extends Controller
             'content' => 'required|string',
         ]);
 
-        $nibble = $delight->nibbles()->create([
+        $nibble = $post->nibbles()->create([
             'gourmet_id' => Auth::id(),
             'content' => $request['content'],
         ]);

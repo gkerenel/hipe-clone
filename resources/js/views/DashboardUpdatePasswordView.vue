@@ -1,8 +1,7 @@
 <script setup lang="ts">
 	import { ref, reactive } from 'vue'
 	import router from '@/router'
-	import { useAuthStore } from '@/stores/auth.ts'
-    import {profileUpdatePassword} from "@/services/api/profile";
+    import { ProfileApi } from '@/services/api/profile'
 
 	const user = reactive({
         current: '',
@@ -21,8 +20,7 @@
         }, 20000)
     }
 	async function onSubmit() {
-        const token = useAuthStore().get()
-        const response = await profileUpdatePassword(token, user.current, user.password_new, user.password_new_confirmation)
+        const response = await ProfileApi.passwordUpdate(user.current, user.password_new, user.password_new_confirmation)
 
         if (response.success) {
             await router.push('/dashboard/profile')

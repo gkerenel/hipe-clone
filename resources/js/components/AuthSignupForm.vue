@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import { ref } from 'vue'
     import { useAuthStore } from '@/stores/auth'
-    import { authSignUp } from '@/services/api/auth'
+    import { AuthApi } from '@/services/api/auth'
 
     const username = ref('')
     const email = ref('')
@@ -19,18 +19,16 @@
     }
     async function onSubmit() {
         submit.value = true
-
-        const response = await authSignUp(username.value, email.value, password.value)
+        const response = await AuthApi.signup(username.value, email.value, password.value)
 
         if (response.success) {
             useAuthStore().set(response.token)
             await router.push('/dashboard')
         }
-        else {
-            password.value = ''
-            submit.value = false
-            showError(response.error)
-        }
+
+        password.value = ''
+        submit.value = false
+        showError(response.error)
     }
 </script>
 

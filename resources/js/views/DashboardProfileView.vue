@@ -1,12 +1,10 @@
 <script setup lang="ts">
 	import { onMounted, ref } from 'vue'
 	import router from '@/router'
-	import { useAuthStore } from '@/stores/auth.ts'
-    import { profileInfo } from '@/services/api/profile'
+    import { ProfileApi } from '@/services/api/profile'
 	interface User {
 		name: string;
 		username: string;
-		email: string;
 		bio: string;
 		followers_count: number;
 		followings_count: number;
@@ -25,8 +23,7 @@
 	const user = ref<User | null>()
 
 	onMounted(async () => {
-        const token = useAuthStore().get()
-        const response = await profileInfo(token)
+        const response = await ProfileApi.getInfo()
 
         if (response.success) {
             user.value = response.user

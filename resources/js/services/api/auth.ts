@@ -1,58 +1,60 @@
 import axios from 'axios'
+import { useAuthStore } from '@/stores/auth'
 
-const BASE_URL = 'http://127.0.0.1:8000/api'
-
-export const authTest = async (token) => {
-    return axios.get(`${BASE_URL}/test`, {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    }).
-    then(() => {
-        return true
-    })
-    .catch(() => {
-        return false
-    })
+interface AuthResult {
+    success: boolean,
+    token?: string,
+    error?: Array<string>
 }
 
-export const authSignIn = async (username, password) => {
-    return axios.post(`${BASE_URL}/signin`,  {
-        username: username,
-        password: password,
-    })
-    .then((response) => {
-        return { success: true, token: response.data.token, error: null }
-    })
-    .catch((error) => {
-        return { success: false, token: null, error: error.response.data.errors }
-    })
+interface AuthService {
+    test(): Promise<boolean>,
+    signin(username: string, password: string): Promise<AuthResult>,
+    signup(username: string, email: string, password: string): Promise<AuthResult>,
+    signout(current: string, new_password: string, new_password_confirmation): Promise<AuthResult>
 }
 
-export const authSignUp = async (username, email, password) => {
-    return axios.post(`${BASE_URL}/signup`,  {
-        username: username,
-        email: email,
-        password: password,
-    })
-    .then((response) => {
-        return { success: true, token: response.data.token, error: null }
-    })
-    .catch((error) => {
-        return { success: false, token: null, error: error.response.data.errors }
-    })
-}
+const TOKEN: string = useAuthStore().get()
+const BASE_URL: string = 'http://127.0.0.1:8000/api'
 
-export const authSignOut = async (token) => {
-    return axios.delete(`${BASE_URL}/signout`, {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        }
-    })
-    .then((response) => {
-        return { success: true }
-    })
-    .catch((error) => {
-        return { success: false }
-    })
+export const AuthApi: AuthService = {
+    async test(): Promise<AuthResult> {
+        return axios.get(`${BASE_URL}/test`, { headers: { Authorization: `Bearer ${TOKEN}` }})
+        .then(() => {
+            return { success: true }
+        })
+        .catch(() => {
+            return { success: false }
+        })
+    },
+
+    async signin(username: string, password: string): Promise<AuthResult> {
+        return axios.post(`${BASE_URL}/signin`,  {username, password})
+        .then((response) => {
+            return { success: true, token: response.data.token, error: null }
+        })
+        .catch((error) => {
+            return { success: false, token: null, error: error.response.data.errors }
+        })
+    },
+
+    async signup(username: string, email: string, password: string): Promise<AuthResult> {
+        return axios.post(`${BASE_URL}/signup`,  { username, email, password })
+        .then((response) => {
+            return { success: true, token: response.data.token, error: null }
+        })
+        .catch((error) => {
+            return { success: false, token: null, error: error.response.data.errors }
+        })
+    },
+
+    async signout(): Promise<AuthResult> {
+        return axios.delete(`${BASE_URL}/signout`, { headers: { Authorization: `Bearer ${TOKEN}` }})
+        .then((response) => {
+            return { success: true }
+        })
+        .catch((error) => {
+            return { success: false }
+        })
+    }
 }

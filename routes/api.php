@@ -11,10 +11,10 @@ use Illuminate\Support\Facades\Route;
 Route::controller(AuthController::class)->group(function () {
     Route::post('/signup','signup');
     Route::post('/signin', 'signin');
+    Route::get('/test', 'test');
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/signout', 'signout');
-        Route::get('/test', 'test');
     });
 });
 
@@ -38,7 +38,8 @@ Route::controller(PostController::class)->group(function () {
 Route::controller(LikeController::class)->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/like/{post}/like', 'like');
-        Route::post('/like/{post}/unlike', 'unlike');
+        Route::put('/like/{post}/unlike', 'unlike');
+        Route::put('/like/{post}/isliked', 'isliked');
     });
 });
 

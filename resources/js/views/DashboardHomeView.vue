@@ -1,38 +1,29 @@
 <script setup lang="ts">
-import { reactive, ref } from "vue";
-import { useRouter } from "vue-router";
+    import { ref, onMounted } from 'vue'
+    import { useRouter } from 'vue-router'
+    import {useAuthStore} from '@/stores/auth'
+    import {postGet} from '@/services/api/post'
 
-const posts = reactive([
-    {
-        id: 1,
-        author: { name: "Jane Doe", username: "jane_doe" },
-        content: "This is my first post!",
-        likes: 10,
-        isLiked: false,
-        showComments: false,
-        comments: [
-            { id: 1, author: { name: "John", username: "john123" }, content: "Great post!" },
-            { id: 2, author: { name: "Alice", username: "alice456" }, content: "I totally agree!" },
-        ],
-    },
-    {
-        id: 2,
-        author: { name: "John Smith", username: "john_smith" },
-        content: "Hello, everyone!",
-        likes: 5,
-        isLiked: false,
-        showComments: false,
-        comments: [],
-    },
-]);
+    const posts = ref([])
+    const newComment = ref("")
+    const router = useRouter()
+    const token = useAuthStore().get()
 
-const newComment = ref("");
-const router = useRouter();
 
-function toggleLike(post) {
-    post.isLiked = !post.isLiked;
-    post.likes += post.isLiked ? 1 : -1;
-}
+    onMounted(async () => {
+
+        const response = await postGet(token)
+        posts.value = response.posts
+    })
+
+    async function toggleLike(post) {
+        if (!post.isLiked) {
+            post.likes_count += 1;
+        } else {
+            post.likes_count -= 1;
+        }
+        post.isLiked = !post.isLiked;
+    }
 
 function toggleComments(post) {
     post.showComments = !post.showComments;
@@ -42,8 +33,9 @@ function addComment(post) {
     if (newComment.value.trim() !== "") {
         post.comments.push({
             id: Date.now(),
-            author: { name: "You", username: "your_username" },
-            content: newComment.value,
+            post_id: post.id,
+            body: newComment.value,
+            user: { id: 0, name: "You", username: "your_username" },
         });
         newComment.value = ""; // Clear input
     }
@@ -67,18 +59,18 @@ function goToUserProfile(username) {
                     <div
                         class="w-10 h-10 bg-blue-500 text-white flex items-center justify-center rounded-full text-lg font-bold"
                     >
-                        {{ post.author.name.charAt(0) }}
+                        {{ post.user_id.toString().charAt(0) }}
                     </div>
                     <div>
-                        <h2 class="font-bold text-lg">{{ post.author.name }}</h2>
-                        <p class="text-gray-500 text-sm">@{{ post.author.username }}</p>
+                        <h2 class="font-bold text-lg">{{ post.user_id }}</h2>
+                        <p class="text-gray-500 text-sm">Posted at {{ new Date(post.updated_at).toLocaleString() }}</p>
                     </div>
                 </div>
 
-                <!-- Post Content -->
-                <p class="text-gray-700">{{ post.content }}</p>
+                <!-- Post Body -->
+                <p class="text-gray-700">{{ post.body }}</p>
 
-                <!-- Actions (Likes, Comments) -->
+                <!-- Actions -->
                 <div class="flex items-center space-x-6">
                     <button
                         @click="toggleLike(post)"
@@ -90,7 +82,7 @@ function goToUserProfile(username) {
                                 d="M12 4.248C8.852-1.443 0 1.36 0 8.14 0 14.366 12 22 12 22s12-7.634 12-13.86C24 1.36 15.148-1.443 12 4.248z"
                             />
                         </svg>
-                        <span>{{ post.likes }}</span>
+                        <span>{{ post.likes_count }}</span>
                     </button>
                     <button @click="toggleComments(post)" class="flex items-center text-blue-500 space-x-1">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
@@ -100,8 +92,8 @@ function goToUserProfile(username) {
                     </button>
                 </div>
 
-                <!-- Comments Section -->
-                <div v-if="post.showComments" class="space-y-2">
+                <!-- Comments -->
+                <div v-if="post.showComments" class="space-y-4">
                     <div
                         v-for="comment in post.comments"
                         :key="comment.id"
@@ -110,11 +102,11 @@ function goToUserProfile(username) {
                         <p>
               <span
                   class="font-semibold text-blue-500 cursor-pointer hover:underline"
-                  @click="goToUserProfile(comment.author.username)"
+                  @click="goToUserProfile(comment.user.username)"
               >
-                {{ comment.author.name }}
+                {{ comment.user.name }}
               </span>
-                            : {{ comment.content }}
+                            : {{ comment.body }}
                         </p>
                     </div>
                     <div class="flex space-x-2 mt-2">

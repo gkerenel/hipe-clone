@@ -1,7 +1,6 @@
 <script setup lang="ts">
 	import { onMounted, ref, reactive } from 'vue'
-    import { useAuthStore } from '@/stores/auth.ts'
-    import {profileInfo, profileUpdate} from '@/services/api/profile'
+    import { ProfileApi } from '@/services/api/profile'
     import router from "@/router";
 
 	const user = reactive({
@@ -35,8 +34,7 @@
     }
 
 	async function onSubmit() {
-		const token = useAuthStore().get()
-        const response = await profileUpdate(token, user.name, user.username, user.email, user.bio)
+        const response = await ProfileApi.infoUpdate(user.name, user.username, user.email, user.bio)
 
         if (response.success) {
             await router.push('/dashboard/profile')
@@ -47,8 +45,7 @@
 	}
 
     onMounted(async () => {
-        const token = useAuthStore().get()
-        const response = await profileInfo(token)
+        const response = ProfileApi.getInfo()
 
         if (response.success) {
             user.name = response.user.name

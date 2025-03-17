@@ -51,4 +51,16 @@ class LikeController extends Controller
         $like->delete();
         return response()->noContent();
     }
+
+    public function isliked(Request $request, Post $post) : Response
+    {
+        $user = $request->user();
+
+        if ($post->isLikeBy($user->id)) {
+            return response()->noContent();
+        }
+        else {
+            return response()->noContent(404);
+        }
+    }
 }

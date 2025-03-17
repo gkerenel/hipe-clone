@@ -2,7 +2,7 @@
 	import { ref } from 'vue'
     import router from '@/router'
     import { useAuthStore } from '@/stores/auth'
-    import { authSignIn } from '@/services/api/auth'
+    import { AuthApi } from '@/services/api/auth'
 
     const username = ref('')
 	const password = ref('')
@@ -20,18 +20,16 @@
 
 	async function onSubmit() {
 		submit.value = true
-
-        const response = await authSignIn(username.value, password.value)
+        const response = await AuthApi.signin(username.value, password.value)
 
         if (response.success) {
             useAuthStore().set(response.token)
             await router.push('/dashboard')
         }
-        else {
-            password.value = ''
-            submit.value = false
-            showError(response.error)
-        }
+
+        password.value = ''
+        submit.value = false
+        showError(response.error)
 	}
 </script>
 
