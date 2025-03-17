@@ -13,7 +13,6 @@ interface PostService {
     update(post_id: number, body: string): Promise<PostResult>,
     delete(post_id: number): Promise<PostResult>,
     get(): Promise<PostResult>,
-    postLike(post_id)
 }
 
 const TOKEN: string = useAuthStore().get()
@@ -58,5 +57,9 @@ export const PostApi: PostService = {
         .catch((error) => {
             return { success: false, error: error.response.datae.errors }
         })
+    }
+
+    async post(post_id: number): Promise<PostResult> {
+
     }
 }
