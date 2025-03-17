@@ -13,7 +13,7 @@ class PostController extends Controller
     public function index(Request $request) : JsonResponse
     {
         $user = $request->user();
-        $posts = $user->posts()->with(['comments.user'])->withCount('likes')->get();
+        $posts = $user->posts()->with(['comments.user', 'user'])->withCount('likes')->get();
         return response()->json([
             'posts' => $posts
         ]);

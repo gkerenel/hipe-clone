@@ -1,19 +1,23 @@
 <script setup lang="ts">
     import { ref, onMounted } from 'vue'
     import { useRouter } from 'vue-router'
-    import {useAuthStore} from '@/stores/auth'
-    import {postGet} from '@/services/api/post'
+    import { PostApi } from '@/services/api/post'
+    import CommentList from '@/components/CommentList.vue'
+    import CommentAdd from '@/components/CommentAdd.vue'
 
     const posts = ref([])
-    const newComment = ref("")
     const router = useRouter()
-    const token = useAuthStore().get()
 
 
     onMounted(async () => {
+        const response = await PostApi.get()
 
-        const response = await postGet(token)
-        posts.value = response.posts
+        if (response.success) {
+            posts.value = response.posts
+        }
+        else {
+
+        }
     })
 
     async function toggleLike(post) {
@@ -25,44 +29,28 @@
         post.isLiked = !post.isLiked;
     }
 
-function toggleComments(post) {
-    post.showComments = !post.showComments;
-}
-
-function addComment(post) {
-    if (newComment.value.trim() !== "") {
-        post.comments.push({
-            id: Date.now(),
-            post_id: post.id,
-            body: newComment.value,
-            user: { id: 0, name: "You", username: "your_username" },
-        });
-        newComment.value = ""; // Clear input
+    function toggleComments(post) {
+        post.showComments = !post.showComments;
     }
-}
-
-function goToUserProfile(username) {
-    router.push(`/profile/${username}`);
-}
 </script>
 
 <template>
     <main class="flex-1 p-8 h-min-screen">
         <div class="bg-white shadow rounded-lg p-3 space-y-6">
             <div
+                v-if="posts"
                 v-for="post in posts"
                 :key="post.id"
                 class="bg-gray-100 shadow-sm rounded-lg p-4 space-y-4"
             >
-                <!-- Post Header -->
                 <div class="flex items-center space-x-4">
                     <div
                         class="w-10 h-10 bg-blue-500 text-white flex items-center justify-center rounded-full text-lg font-bold"
                     >
-                        {{ post.user_id.toString().charAt(0) }}
+                        {{ post.user.name.split(' ').map(n => n[0]).join('') }}
                     </div>
                     <div>
-                        <h2 class="font-bold text-lg">{{ post.user_id }}</h2>
+                        <h2 class="font-bold text-lg">@{{ post.user.username }}</h2>
                         <p class="text-gray-500 text-sm">Posted at {{ new Date(post.updated_at).toLocaleString() }}</p>
                     </div>
                 </div>
@@ -92,37 +80,9 @@ function goToUserProfile(username) {
                     </button>
                 </div>
 
-                <!-- Comments -->
                 <div v-if="post.showComments" class="space-y-4">
-                    <div
-                        v-for="comment in post.comments"
-                        :key="comment.id"
-                        class="border-b pb-2"
-                    >
-                        <p>
-              <span
-                  class="font-semibold text-blue-500 cursor-pointer hover:underline"
-                  @click="goToUserProfile(comment.user.username)"
-              >
-                {{ comment.user.name }}
-              </span>
-                            : {{ comment.body }}
-                        </p>
-                    </div>
-                    <div class="flex space-x-2 mt-2">
-                        <input
-                            v-model="newComment"
-                            type="text"
-                            placeholder="Add a comment..."
-                            class="flex-1 border rounded px-2 py-1"
-                        />
-                        <button
-                            @click="addComment(post)"
-                            class="bg-blue-500 text-white px-4 py-1 rounded"
-                        >
-                            Post
-                        </button>
-                    </div>
+                    <CommentList :comments="post.comments" />
+                    <CommentAdd :post_id="post.id" />
                 </div>
             </div>
         </div>
