@@ -4,16 +4,6 @@ export const dashboardRoutes = [
 		'name': 'dashboard_home',
 		component: () => import('@/views/DashboardHomeView.vue')
 	},
-	{
-		'path': 'explore',
-		'name': 'dashboard_explore',
-		component: () => import('@/views/DashboardExploreView.vue')
-	},
-	{
-		'path': 'ai',
-		'name': 'dashboard_ai',
-		component: () => import('@/views/DashboardAiView.vue')
-	},
     {
         'path': 'user/:username',
         'name': 'dashboard_username',
