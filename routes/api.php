@@ -35,7 +35,7 @@ Route::controller(UserController::class)->group(function () {
 
 Route::controller(PostController::class)->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
-        Route::get('/post', 'store');
+        Route::get('/post', 'show');
         Route::post('/post', 'store');
         Route::get('/post/{post}', 'index');
         Route::put('/post/{post}', 'update');

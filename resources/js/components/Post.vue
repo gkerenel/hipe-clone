@@ -2,12 +2,13 @@
     import CommentAdd from '@/components/CommentAdd.vue'
     import CommentList from '@/components/CommentList.vue'
     import { PostApi } from '@/services/api/post'
-    import {ref} from 'vue'
-    import router from '@/router'
+    import router from "@/router";
+    import {ref, watch} from 'vue'
 
-    defineProps({
+    const props = defineProps({
         posts: {
-            required: false
+            required: false,
+
         }
     })
 
@@ -30,11 +31,20 @@
         }
     }
     async function editPost(post_id) {
-        await router.push(`/dashboard/post/${post_id}`)
+        await router.push({
+            name: 'dashboard_post',
+            params: {
+                id: post_id
+            }
+        })
     }
 
-    function deletePost(post_id) {
+    async function deletePost(post_id) {
         await PostApi.delete(post_id)
+
+        if (props.posts) {
+            props.posts = props.posts.filter(post => post.id = post_id)
+        }
     }
 
     function toggleComments(post) {

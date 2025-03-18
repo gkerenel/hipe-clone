@@ -6,7 +6,7 @@ import {onMounted, ref} from 'vue'
     const posts = ref([])
 
     onMounted(async () => {
-        const response = await PostApi.get()
+        const response = await PostApi.show()
 
         if (response.success) {
             posts.value = response.posts

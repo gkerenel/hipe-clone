@@ -31,7 +31,7 @@ class PostController extends Controller
         $user = $request->user();
 
         $validator = Validator::make($request->all(), [
-            'body' => ['required', 'string'],
+            'body' => ['required', 'string', 'max:1024'],
         ]);
 
         if ($validator->fails()) {
@@ -76,7 +76,7 @@ class PostController extends Controller
     {
         $user = $request->user();
 
-        if ($post->user()->id != $user->id) {
+        if ($post->user->id != $user->id) {
             return response()->json([
                 'errors' => ['you do not own post']
             ], 403);
