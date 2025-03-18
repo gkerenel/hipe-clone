@@ -59,7 +59,7 @@ export const ProfileApi: ProfileService = {
             return { success: true }
         })
         .catch((error) => {
-            return { success: false }
+            return { success: false, error: error.response.data.errors }
         })
     }
 }

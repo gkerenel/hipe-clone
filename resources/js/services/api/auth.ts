@@ -11,7 +11,7 @@ interface AuthService {
     test(): Promise<boolean>,
     signin(username: string, password: string): Promise<AuthResult>,
     signup(username: string, email: string, password: string): Promise<AuthResult>,
-    signout(current: string, new_password: string, new_password_confirmation): Promise<AuthResult>
+    signout(): Promise<AuthResult>
 }
 
 const TOKEN: string = useAuthStore().get()

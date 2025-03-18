@@ -26,10 +26,11 @@
             useAuthStore().set(response.token)
             await router.push('/dashboard')
         }
-
-        password.value = ''
-        submit.value = false
-        showError(response.error)
+        else {
+            password.value = ''
+            submit.value = false
+            showError(response.error)
+        }
 	}
 </script>
 

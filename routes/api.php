@@ -14,7 +14,7 @@ Route::controller(AuthController::class)->group(function () {
     Route::get('/test', 'test');
 
     Route::middleware('auth:sanctum')->group(function () {
-        Route::post('/signout', 'signout');
+        Route::delete('/signout', 'signout');
     });
 });
 

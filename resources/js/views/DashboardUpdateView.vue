@@ -14,7 +14,6 @@
     const errors_show = ref(false)
 
 	const MAX_BIO_LENGTH = 255
-	const auth = useAuthStore()
 	const remaining = ref(MAX_BIO_LENGTH)
 
 	function onBioInput() {
@@ -45,8 +44,8 @@
 	}
 
     onMounted(async () => {
-        const response = ProfileApi.getInfo()
-
+        const response = await ProfileApi.getInfo()
+        console.log(response)
         if (response.success) {
             user.name = response.user.name
             user.username = response.user.username

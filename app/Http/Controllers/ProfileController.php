@@ -66,7 +66,7 @@ class ProfileController extends Controller
         if ($request['current'] == $request['password_new']) {
             return response()->json([
                 'errors' => ['current password cannot be same as new password']
-            ], 401);
+            ], 422);
         }
 
         $user->update(['password' => Hash::make($request['password_new'])]);

@@ -1,11 +1,10 @@
 <script setup lang="ts">
-	import { useAuthStore } from '@/stores/auth.ts';
-	import router from '@/router';
-    import {authSignOut} from "@/services/api/auth";
+	import { useAuthStore } from '@/stores/auth.ts'
+	import router from '@/router'
+    import {AuthApi } from '@/services/api/auth'
 
 	async function onSignout() {
-		const token = useAuthStore().get()
-		await authSignOut(token)
+		await AuthApi.signout()
         useAuthStore().clear()
         await router.push('/')
 	}
