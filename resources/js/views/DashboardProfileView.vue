@@ -1,43 +1,31 @@
 <script setup lang="ts">
-	import { onMounted, ref } from 'vue'
-	import router from '@/router'
     import { ProfileApi } from '@/services/api/profile'
-	interface User {
-		name: string;
-		username: string;
-		bio: string;
-		followers_count: number;
-		followings_count: number;
-	}
-    function getRandomColor() {
-        const letters = "0123456789ABCDEF"
-        let color = "#"
+    import { PostApi } from '@/services/api/post'
+    import { User } from '@/interfaces/user'
+    import { Post as PostInterface } from '@/interfaces/post'
+    import Post from '@/components/Post.vue'
+    import { onMounted, ref } from 'vue'
+    import router from '@/router'
 
-        for (let i = 0; i < 6; i++) {
-            color += letters[Math.floor(Math.random() * 16)]
-        }
-        return color
+    const posts = ref<PostInterface[]>()
+    const user = ref<User>()
+
+    function getRandomColor() {
+        return  `#${Math.floor(Math.random() * 0xFFFFFF).toString(16).padStart(6, '0').toUpperCase()}`
     }
 
-    const posts = ref()
-	const user = ref<User | null>()
-
 	onMounted(async () => {
-        const response = await ProfileApi.getInfo()
+        const responseUser = await ProfileApi.show()
+        const responsePosts = await PostApi.show()
 
-        if (response.success) {
-            user.value = response.user
-        }
-        else {
-            user.value = {
-                name: "John Doe",
-                username: "John Doe",
-                email: "jane.doe@example.com",
-                bio: 'this is error data',
-                followers_count: -1,
-                followings_count: -1
-            }
-        }
+        user.value =
+            responseUser.success ?
+                responseUser.user :
+                { name: "error", username: "error", email: "error", bio: 'error', followers_count: -1, followings_count: -1 }
+
+        posts.value = responsePosts.success ?
+                responsePosts.posts :
+                []
 	})
 </script>
 
@@ -76,11 +64,12 @@
 					</div>
 				</div>
 			</div>
-			<div class="border-t border-gray-300 p-6">
-				<p class="text-gray-700">
-					{{ posts }}
-				</p>
-			</div>
+            <div v-if="posts" class="bg-white shadow rounded-lg p-3 space-y-6">
+                <Post :posts="posts" />
+            </div>
+            <div v-else class="bg-white shadow rounded-lg p-8 space-y-6">
+                <h2 class="font-bold">you have no posts</h2>
+            </div>
 		</div>
 	</main>
 </template>

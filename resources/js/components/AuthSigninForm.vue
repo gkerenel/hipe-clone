@@ -10,9 +10,9 @@
     const errors_show = ref(false)
 	const submit = ref(false)
 
-    function showError(error) {
+    function showError(errs: string[]) {
         errors_show.value = true
-        errors.value = error.join('\n')
+        errors.value = errs.join('\n')
         setTimeout(() => {
             errors_show.value = false
         }, 20000)
@@ -29,7 +29,7 @@
         else {
             password.value = ''
             submit.value = false
-            showError(response.error)
+            showError(response.errors)
         }
 	}
 </script>

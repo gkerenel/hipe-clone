@@ -1,12 +1,17 @@
 <script setup lang="ts">
     import CommentAdd from '@/components/CommentAdd.vue'
     import CommentList from '@/components/CommentList.vue'
+    import { PostApi } from '@/services/api/post'
+    import {ref} from 'vue'
+    import router from '@/router'
 
     defineProps({
         posts: {
             required: false
         }
     })
+
+    const openMenu = ref(false)
 
     async function toggleLike(post) {
         if (!post.isLiked) {
@@ -17,20 +22,46 @@
         post.isLiked = !post.isLiked;
     }
 
+    function toggleMenu(postId) {
+        if (openMenu.value === postId) {
+            openMenu.value = null;
+        } else {
+            openMenu.value = postId;
+        }
+    }
+    async function editPost(post_id) {
+        await router.push(`/dashboard/post/${post_id}`)
+    }
+
+    function deletePost(post_id) {
+        await PostApi.delete(post_id)
+    }
+
     function toggleComments(post) {
         post.showComments = !post.showComments;
     }
 </script>
 
 <template>
-    <div v-if="posts" v-for="post in posts" :key="post.id" class="bg-gray-100 shadow-sm rounded-lg p-4 space-y-4">
-        <div class="flex items-center space-x-4">
-            <div class="w-10 h-10 bg-blue-500 text-white flex items-center justify-center rounded-full text-lg font-bold">
-                {{ post.user.name.split(' ').map(n => n[0]).join('') }}
+    <div v-if="posts" v-for="post in posts" :key="post.id" class="bg-white shadow-lg rounded-2xl p-4 border border-gray-200">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <div class="w-10 h-10 bg-blue-500 text-white flex items-center justify-center rounded-full text-lg font-bold">
+                    {{ post.user.name.split(' ').map(n => n[0]).join('') }}
+                </div>
+                <div>
+                    <h2 class="font-bold text-lg">@{{ post.user.username }}</h2>
+                    <p class="text-gray-500 text-sm">Posted at {{ new Date(post.updated_at).toLocaleString() }}</p>
+                </div>
             </div>
-            <div>
-                <h2 class="font-bold text-lg">@{{ post.user.username }}</h2>
-                <p class="text-gray-500 text-sm">Posted at {{ new Date(post.updated_at).toLocaleString() }}</p>
+            <div v-if="post.user_id === post.user.id" class="relative">
+                <button @click="toggleMenu(post.id)" class="text-gray-600 hover:text-gray-800">
+                    ⋮
+                </button>
+                <div v-if="openMenu === post.id" class="absolute right-0 mt-2 w-32 bg-white shadow-md rounded-lg border border-gray-200">
+                    <button @click="editPost(post.id, post.body)" class="block w-full text-left px-4 py-2 hover:bg-gray-100">Edit</button>
+                    <button @click="deletePost(post.id)" class="block w-full text-left px-4 py-2 hover:bg-gray-100 text-red-500">Delete</button>
+                </div>
             </div>
         </div>
         <p class="text-gray-700">{{ post.body }}</p>

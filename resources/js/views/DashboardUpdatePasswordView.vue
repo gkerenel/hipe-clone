@@ -1,7 +1,7 @@
 <script setup lang="ts">
-	import { ref, reactive } from 'vue'
-	import router from '@/router'
     import { ProfileApi } from '@/services/api/profile'
+    import { ref, reactive } from 'vue'
+    import router from '@/router'
 
 	const user = reactive({
         current: '',
@@ -12,25 +12,24 @@
     const errors = ref('')
     const errors_show = ref(false)
 
-    function showError(error) {
+    function showError(errs) {
         errors_show.value = true
-        errors.value = error.join('\n')
+        errors.value = errs.join('\n')
         setTimeout(() => {
             errors_show.value = false
         }, 20000)
     }
 	async function onSubmit() {
-        const response = await ProfileApi.passwordUpdate(user.current, user.password_new, user.password_new_confirmation)
+        const response = await ProfileApi.updatePassword(user.current, user.password_new, user.password_new_confirmation)
 
         if (response.success) {
             await router.push('/dashboard/profile')
         }
         else {
-            showError(response.error)
+            showError(response.errors)
         }
 	}
 </script>
-
 
 <template>
 	<main class="flex-1 p-8 h-min-screen">

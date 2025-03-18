@@ -1,6 +1,6 @@
 <script setup lang="ts">
-	import HomeNavbar from '@/components/HomeNavbar.vue'
-	import HomeContent from '@/components/HomeContent.vue'
+    import HomeContent from '@/components/HomeContent.vue'
+    import HomeNavbar from '@/components/HomeNavbar.vue'
 </script>
 
 <template>

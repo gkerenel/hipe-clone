@@ -6,6 +6,7 @@ use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::controller(AuthController::class)->group(function () {
@@ -21,15 +22,22 @@ Route::controller(AuthController::class)->group(function () {
 Route::controller(ProfileController::class)->group(function () {
    Route::middleware('auth:sanctum')->group(function () {
        Route::get('/profile', 'show');
-       Route::post('/profile', 'update');
-       Route::post('/profile/password', 'updatePassword');
+       Route::put('/profile/update', 'update');
+       Route::put('/profile/updatePassword', 'updatePassword');
    });
+});
+
+Route::controller(UserController::class)->group(function () {
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/user/{user}', 'show');
+    });
 });
 
 Route::controller(PostController::class)->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
-        Route::get('/post', 'index');
+        Route::get('/post', 'store');
         Route::post('/post', 'store');
+        Route::get('/post/{post}', 'index');
         Route::put('/post/{post}', 'update');
         Route::delete('/post/{post}', 'delete');
     });

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 	import { useAuthStore } from '@/stores/auth.ts'
-	import router from '@/router'
     import {AuthApi } from '@/services/api/auth'
+	import router from '@/router'
 
 	async function onSignout() {
 		await AuthApi.signout()

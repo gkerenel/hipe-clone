@@ -17,7 +17,7 @@ class ProfileController extends Controller
         ]);
     }
 
-    public function update(Request $request): JsonResponse
+    public function update(Request $request): JsonResponse | Response
     {
         $user = $request->user();
 
@@ -25,8 +25,7 @@ class ProfileController extends Controller
             'name' => ['nullable', 'string'],
             'username' => ['nullable', 'string', 'unique:users,username,' . $user->id],
             'email' => ['nullable', 'email', 'unique:users,email,' . $user->id],
-            'bio' => ['nullable', 'string'],
-            'photo' => ['nullable', 'string'],
+            'bio' => ['nullable', 'string']
         ]);
 
         if ($validator->fails()) {
@@ -36,10 +35,8 @@ class ProfileController extends Controller
                 422);
         }
 
-        $user->update($request->only('name', 'username', 'email', 'bio', 'photo'));
-        return response()->json([
-            'user' => $user
-        ]);
+        $user->update($request->only('name', 'username', 'email', 'bio'));
+        return response()->noContent();
     }
 
     public function updatePassword(Request $request): JsonResponse | Response
@@ -47,8 +44,8 @@ class ProfileController extends Controller
         $user = $request->user();
 
         $validator = Validator::make($request->all(), [
-            'current' => ['required', 'string', 'min:8', 'max:255'],
-            'password_new' => ['required', 'string', 'min:8', 'max:255', 'confirmed'],
+            'current' => ['required', 'string'],
+            'password_new' => ['required', 'string', 'min:8', 'max:60', 'confirmed'],
         ]);
 
         if ($validator->fails()) {

@@ -4,11 +4,11 @@ import { useAuthStore } from '@/stores/auth'
 interface AuthResult {
     success: boolean,
     token?: string,
-    error?: Array<string>
+    errors?: string[]
 }
 
 interface AuthService {
-    test(): Promise<boolean>,
+    test(): Promise<AuthResult>,
     signin(username: string, password: string): Promise<AuthResult>,
     signup(username: string, email: string, password: string): Promise<AuthResult>,
     signout(): Promise<AuthResult>
@@ -31,20 +31,20 @@ export const AuthApi: AuthService = {
     async signin(username: string, password: string): Promise<AuthResult> {
         return axios.post(`${BASE_URL}/signin`,  {username, password})
         .then((response) => {
-            return { success: true, token: response.data.token, error: null }
+            return { success: true, token: response.data.token }
         })
         .catch((error) => {
-            return { success: false, token: null, error: error.response.data.errors }
+            return { success: false, errors: error.response.data.errors }
         })
     },
 
     async signup(username: string, email: string, password: string): Promise<AuthResult> {
         return axios.post(`${BASE_URL}/signup`,  { username, email, password })
         .then((response) => {
-            return { success: true, token: response.data.token, error: null }
+            return { success: true, token: response.data.token}
         })
         .catch((error) => {
-            return { success: false, token: null, error: error.response.data.errors }
+            return { success: false, errors: error.response.data.errors }
         })
     },
 

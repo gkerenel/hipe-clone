@@ -1,7 +1,7 @@
 <script setup lang="ts">
-	import AuthNavbar from '@/components/AuthNavbar.vue'
+    import AuthSigninForm from '@/components/AuthSigninForm.vue'
 	import AuthContent from '@/components/AuthContent.vue'
-	import AuthSigninForm from '@/components/AuthSigninForm.vue'
+    import AuthNavbar from '@/components/AuthNavbar.vue'
 </script>
 
 <template>

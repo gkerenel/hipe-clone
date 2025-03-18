@@ -33,7 +33,7 @@
     }
 
 	async function onSubmit() {
-        const response = await ProfileApi.infoUpdate(user.name, user.username, user.email, user.bio)
+        const response = await ProfileApi.update(user.name, user.username, user.email, user.bio)
 
         if (response.success) {
             await router.push('/dashboard/profile')
@@ -44,8 +44,8 @@
 	}
 
     onMounted(async () => {
-        const response = await ProfileApi.getInfo()
-        console.log(response)
+        const response = await ProfileApi.show()
+
         if (response.success) {
             user.name = response.user.name
             user.username = response.user.username

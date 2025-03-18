@@ -1,7 +1,3 @@
-<script setup lang="ts">
-
-</script>
-
 <template>
 	<main class="max-w-6xl mx-auto px-4 py-8 pt-20">
 		<div class="bg-white rounded-lg shadow-md p-8 mb-8">

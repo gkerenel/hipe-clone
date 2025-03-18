@@ -10,12 +10,19 @@ use Illuminate\Support\Facades\Validator;
 
 class PostController extends Controller
 {
-    public function index(Request $request) : JsonResponse
+    public function show(Request $request) : JsonResponse
     {
         $user = $request->user();
         $posts = $user->posts()->with(['comments.user', 'user'])->withCount('likes')->get();
         return response()->json([
             'posts' => $posts
+        ]);
+    }
+
+    public function index(Request $request, Post $post) : JsonResponse
+    {
+        return response()->json([
+            'post' => $post
         ]);
     }
 

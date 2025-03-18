@@ -22,7 +22,7 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             'username' => ['required', 'string', 'min:2', 'max:255', 'unique:users'],
             'email' => ['required', 'email', 'unique:users'],
-            'password' => ['required', 'string', 'min:8'],
+            'password' => ['required', 'string', 'min:8', 'max:60'],
         ]);
 
         if ($validator->fails()) {
@@ -38,8 +38,6 @@ class AuthController extends Controller
         ]);
 
         $token = $user->createToken('auth_token')->plainTextToken;
-
-        Auth::login($user);
         return response()->json([
             'token' => $token
         ]);
@@ -48,8 +46,8 @@ class AuthController extends Controller
     public function signin(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'username' => ['required', 'string', 'min:2', 'max:255'],
-            'password' => ['required', 'string', 'min:8', 'max:255'],
+            'username' => ['required', 'string'],
+            'password' => ['required', 'string'],
         ]);
 
         if ($validator->fails()) {
@@ -67,7 +65,6 @@ class AuthController extends Controller
         }
 
         $token = $user->createToken('auth_token')->plainTextToken;
-
         return response()->json([
             'token' => $token,
         ]);

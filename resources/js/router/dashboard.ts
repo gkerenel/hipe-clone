@@ -10,17 +10,17 @@ export const dashboardRoutes = [
 		component: () => import('@/views/DashboardExploreView.vue')
 	},
 	{
-		'path': 'notification',
-		'name': 'dashboard_notification',
-		component: () => import('@/views/DashboardNotificationView.vue')
-	},
-	{
 		'path': 'ai',
 		'name': 'dashboard_ai',
 		component: () => import('@/views/DashboardAiView.vue')
 	},
     {
-        'path': 'post',
+        'path': 'user/:username',
+        'name': 'dashboard_username',
+        component: () => import('@/views/DashboardUserView.vue')
+    },
+    {
+        'path': 'post/:id?',
         'name': 'dashboard_post',
         component: () => import('@/views/DashboardPostView.vue')
     },
