@@ -7,7 +7,6 @@ import {onMounted, ref} from 'vue'
 
     onMounted(async () => {
         const response = await PostApi.show()
-
         if (response.success) {
             posts.value = response.posts
         }

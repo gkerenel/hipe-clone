@@ -15,12 +15,18 @@
     const openMenu = ref(false)
 
     async function toggleLike(post) {
-        if (!post.isLiked) {
-            post.likes_count += 1;
+        post.is_liked = (await PostApi.postIsLiked(post.id)).success
+
+        if (!post.is_liked) {
+            if ((await PostApi.postLike(post.id)).success) {
+                post.likes_count += 1;
+            }
         } else {
-            post.likes_count -= 1;
+            if ((await PostApi.postUnLike(post.id)).success)  {
+                post.likes_count -= 1;
+            }
         }
-        post.isLiked = !post.isLiked;
+        post.is_liked = !post.is_liked;
     }
 
     function toggleMenu(postId) {
@@ -78,7 +84,7 @@
         <div class="flex items-center space-x-6">
             <button
                 @click="toggleLike(post)"
-                :class="post.isLiked ? 'text-red-500' : 'text-gray-500'"
+                :class="post.is_liked ? 'text-red-500' : 'text-gray-500'"
                 class="flex items-center space-x-1"
             >
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">

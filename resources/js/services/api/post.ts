@@ -17,7 +17,13 @@ interface PostService {
     create(body): Promise<PostResult>,
     update(post_id: number, body: string): Promise<PostResult>,
     delete(post_id: number): Promise<PostResult>,
-    post(post_id: number): Promise<PostResult>
+    post(post_id: number): Promise<PostResult>,
+    postComment(post_id: number, body:string): Promise<PostResult>,
+    postCommentUpdate(comment_id: number, body:string): Promise<PostResult>,
+    postCommentDelete(comment_id: number): Promise<PostResult>,
+    postLike(post_id: number): Promise<PostResult>,
+    postUnLike(post_id: number): Promise<PostResult>,
+    postIsLiked(post_id: number): Promise<PostResult>
 }
 
 const TOKEN: string = useAuthStore().get()
@@ -56,12 +62,12 @@ export const PostApi: PostService = {
 
     async update(post_id: number, body: string): Promise<PostResult> {
         return axios.put(`${BASE_URL}/post/${post_id}`, { body }, { headers: { Authorization: `Bearer ${TOKEN}` }})
-            .then(() => {
-                return { success: true }
-            })
-            .catch((error) => {
-                return { success: false, error: error.response.datae.errors }
-            })
+        .then(() => {
+            return { success: true }
+        })
+        .catch((error) => {
+            return { success: false, error: error.response.data.errors }
+        })
     },
 
     async delete(post_id: number): Promise<PostResult> {
@@ -73,4 +79,34 @@ export const PostApi: PostService = {
             return { success: false, error: error.response.datae.errors }
         })
     },
+
+    async postLike(post_id: number): Promise<PostResult> {
+        return axios.get(`${BASE_URL}/like/${post_id}/like`,{ headers: { Authorization: `Bearer ${TOKEN}` }})
+        .then(() => {
+            return { success: true }
+        })
+        .catch((error) => {
+            return { success: false }
+        })
+    },
+
+    async postUnLike(post_id: number): Promise<PostResult> {
+        return axios.get(`${BASE_URL}/like/${post_id}/unlike`,{ headers: { Authorization: `Bearer ${TOKEN}` }})
+            .then(() => {
+                return { success: true }
+            })
+            .catch((error) => {
+                return { success: false }
+            })
+    },
+
+    async postIsLiked(post_id: number): Promise<PostResult> {
+        return axios.get(`${BASE_URL}/like/${post_id}/isLiked`,{ headers: { Authorization: `Bearer ${TOKEN}` }})
+        .then(() => {
+            return { success: true }
+        })
+        .catch((error) => {
+            return { success: false }
+        })
+    }
 }

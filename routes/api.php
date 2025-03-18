@@ -45,9 +45,9 @@ Route::controller(PostController::class)->group(function () {
 
 Route::controller(LikeController::class)->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
-        Route::post('/like/{post}/like', 'like');
-        Route::put('/like/{post}/unlike', 'unlike');
-        Route::put('/like/{post}/isliked', 'isliked');
+        Route::get('/like/{post}/like', 'like');
+        Route::get('/like/{post}/unlike', 'unlike');
+        Route::get('/like/{post}/isLiked', 'isLiked');
     });
 });
 

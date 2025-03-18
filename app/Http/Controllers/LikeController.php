@@ -33,16 +33,9 @@ class LikeController extends Controller
     public function unlike(Request $request, Post $post): JsonResponse | Response
     {
         $user = $request->user();
+        $like = $post->likes()->where('user_id', $user->id);
 
-        if (!$user->isFollowing($post->user) || $user->id != $post->user->id) {
-            return response()->json([
-                'errors' => ['you are not following this post user']
-            ], 403);
-        }
-
-        $like = $post->likes()->where('user_id', $user->id)->first();
-
-        if (!$like) {
+        if (!$like->exists()) {
             return response()->json([
                 'errors' => ['you are did not like this post'],
             ], 400);
@@ -52,7 +45,7 @@ class LikeController extends Controller
         return response()->noContent();
     }
 
-    public function isliked(Request $request, Post $post) : Response
+    public function isLiked(Request $request, Post $post) : Response
     {
         $user = $request->user();
 
@@ -60,7 +53,7 @@ class LikeController extends Controller
             return response()->noContent();
         }
         else {
-            return response()->noContent(404);
+            return response(status: 404);
         }
     }
 }

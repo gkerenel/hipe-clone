@@ -13,7 +13,15 @@ class PostController extends Controller
     public function show(Request $request) : JsonResponse
     {
         $user = $request->user();
-        $posts = $user->posts()->with(['comments.user', 'user'])->withCount('likes')->get();
+        $posts = $posts = $user->posts()
+            ->with(['comments.user', 'user'])
+            ->withCount('likes')
+            ->get()
+            ->map(function ($post) use ($user) {
+                $post->is_liked = $post->likes()->where('user_id', $user->id)->exists();
+                return $post;
+            });
+
         return response()->json([
             'posts' => $posts
         ]);
