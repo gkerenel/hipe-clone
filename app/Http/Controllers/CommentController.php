@@ -13,55 +13,69 @@ use Illuminate\Support\Facades\Auth;
 
 class CommentController extends Controller
 {
-    public function store(Request $request, Post $post): Response
+    public function store(Request $request, Post $post): Response | JsonResponse
     {
         $user = $request->user();
 
-        if ($post->public && !$gourmet->isTasting($post->gourmet)) {
-            return response()->json(['message' => 'Nibbles are disabled on public delights'], 403);
+        if (!$user->isFollowing($post->user) && !($user->id == $post->user->id)) {
+            return response()->json([
+                'errors' => ['you are not following this post'],
+            ], 403);
         }
 
         $request->validate([
-            'content' => 'required|string',
+            'body' => 'required|string',
         ]);
 
-        $nibble = $post->nibbles()->create([
-            'gourmet_id' => Auth::id(),
-            'content' => $request['content'],
+        $post->comments()->create([
+            'user_id' => $user->id,
+            'body' => $request['body'],
         ]);
 
-        return new NibbleResource($nibble->load('gourmet'));
+        return response()->noContent();
     }
 
-    public function show(Comment $nibble): NibbleResource
+    public function show(Request $request, Post $post): JsonResponse
     {
-        return new NibbleResource($nibble->load('gourmet', 'delight'));
+        $user = $request->user();
+
+        if (!$user->isFollowing($post->user) && !($user->id == $post->user->id)) {
+            return response()->json([
+                'errors' => ['you are not following this post'],
+            ], 403);
+        }
+
+        return response()->json([
+            'comments' => $post->comments
+        ]);
     }
 
-    public function update(Request $request, Comment $nibble): JsonResponse|NibbleResource
+    public function update(Request $request, Comment $comment): JsonResponse | Response
     {
-        if ($nibble->gourmet_id !== Auth::id()) {
-            return response()->json(['message' => 'Unauthorized'], 403);
+        $user = $request->user();
+
+        if ($comment->user_id !== $user->id) {
+            return response()->json(['errors' => 'Unauthorized'], 403);
         }
 
         $request->validate([
-            'content' => 'string',
+            'body' => 'string',
         ]);
 
-        $nibble->update($request->only('content'));
-
-        return new NibbleResource($nibble->load('gourmet', 'delight'));
+        $comment->update($request->only('body'));
+        return response()->noContent();
     }
 
-    public function destroy(Comment $nibble): JsonResponse
+    public function delete(Request $request, Comment $comment): JsonResponse | Response
     {
-        if ($nibble->gourmet_id !== Auth::id()) {
-            return response()->json(['message' => 'Unauthorized'], 403);
+        $user = $request->user();
+
+        if ($comment->user_id !== $user->id) {
+            return response()->json(['errors' => 'Unauthorized'], 403);
         }
 
-        $nibble->delete();
-
-        return response()->json(['message' => 'Nibble deleted']);
+        $comment->delete();
+        return response()->noContent();
     }
 
 }

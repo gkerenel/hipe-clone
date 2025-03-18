@@ -85,7 +85,7 @@
             <button
                 @click="toggleLike(post)"
                 :class="post.is_liked ? 'text-red-500' : 'text-gray-500'"
-                class="flex items-center space-x-1"
+                class="cursor-pointer flex items-center space-x-1"
             >
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
                     <path
@@ -94,7 +94,7 @@
                 </svg>
                 <span>{{ post.likes_count }}</span>
             </button>
-            <button @click="toggleComments(post)" class="flex items-center text-blue-500 space-x-1">
+            <button @click="toggleComments(post)" class="cursor-pointer flex items-center text-blue-500 space-x-1">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7H8.2L3 21l1.3-4.4a8.62 8.62 0 0 1-.3-2.1 8.5 8.5 0 1 1 17 0z" />
                 </svg>

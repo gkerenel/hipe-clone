@@ -108,5 +108,35 @@ export const PostApi: PostService = {
         .catch((error) => {
             return { success: false }
         })
+    },
+
+    async postComment(post_id: number, body: string): Promise<PostResult> {
+        return axios.post(`${BASE_URL}/comment/${post_id}`, { body }, { headers: { Authorization: `Bearer ${TOKEN}` }})
+        .then(() => {
+            return { success: true }
+        })
+        .catch((error) => {
+            return { success: false, error: error.response.data.errors  }
+        })
+    },
+
+    async postCommentUpdate(comment_id: number, body: string): Promise<PostResult> {
+        return axios.put(`${BASE_URL}/comment/${comment_id}`, { body }, { headers: { Authorization: `Bearer ${TOKEN}` }})
+        .then(() => {
+            return { success: true }
+        })
+        .catch((error) => {
+            return { success: false, error: error.response.data.errors  }
+        })
+    },
+
+    async postCommentDelete(comment_id: number): Promise<PostResult> {
+        return axios.delete(`${BASE_URL}/comment/${comment_id}`, { headers: { Authorization: `Bearer ${TOKEN}` }})
+        .then(() => {
+            return { success: true }
+        })
+        .catch((error) => {
+            return { success: false, error: error.response.data.errors  }
+        })
     }
 }

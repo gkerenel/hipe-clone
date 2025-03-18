@@ -1,6 +1,7 @@
 <script setup lang="ts">
     import { useRouter } from 'vue-router'
     import {ref} from 'vue'
+    import {PostApi} from "@/services/api/post";
     const router = useRouter()
 
     defineProps({
@@ -21,17 +22,18 @@
         editedCommentBody.value = comment.body;
     };
 
-    function saveComment(comment) {
-
+    async function saveComment() {
+        await PostApi.postCommentUpdate(editingCommentId.value, editedCommentBody.value)
+        cancelEdit()
     }
 
-    function cancelEdit(comment) {
+    function cancelEdit() {
         editingCommentId.value = null;
         editedCommentBody.value = '';
     }
 
-    function deleteComment(id) {
-
+    async function deleteComment(id) {
+        await PostApi.postCommentDelete(id)
     }
 </script>
 
@@ -52,12 +54,12 @@
                 </div>
                 <div v-if="currentUserId === comment.user_id">
                     <div v-if="editingCommentId === comment.id" class="space-x-2">
-                        <button @click="saveComment(comment)" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-sm">Save</button>
-                        <button @click="cancelEdit()" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-1 px-2 rounded text-sm">Cancel</button>
+                        <button @click="saveComment(comment.id)" class="cursor-pointer bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-sm">Save</button>
+                        <button @click="cancelEdit()" class="cursor-pointer bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-1 px-2 rounded text-sm">Cancel</button>
                     </div>
                     <div v-else class="space-x-2">
-                        <button @click="editComment(comment)" class="text-blue-500 hover:text-blue-700 text-sm">Edit</button>
-                        <button @click="deleteComment(comment.id)" class="text-red-500 hover:text-red-700 text-sm">Delete</button>
+                        <button @click="editComment(comment)" class="cursor-pointer text-blue-500 hover:text-blue-700 text-sm">Edit</button>
+                        <button @click="deleteComment(comment.id)" class="cursor-pointer text-red-500 hover:text-red-700 text-sm">Delete</button>
                     </div>
                 </div>
             </div>
