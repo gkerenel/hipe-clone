@@ -1,23 +1,66 @@
 <script setup lang="ts">
     import { useRouter } from 'vue-router'
-
+    import {ref} from 'vue'
     const router = useRouter()
 
     defineProps({
         comments: {
             type: Object,
             required: true
+        },
+        currentUserId: {
+            required: true,
         }
     })
+
+    const editingCommentId = ref(null);
+    const editedCommentBody = ref('');
+
+    const editComment = (comment) => {
+        editingCommentId.value = comment.id;
+        editedCommentBody.value = comment.body;
+    };
+
+    function saveComment(comment) {
+
+    }
+
+    function cancelEdit(comment) {
+        editingCommentId.value = null;
+        editedCommentBody.value = '';
+    }
+
+    function deleteComment(id) {
+
+    }
 </script>
 
 <template>
-    <div v-for="comment in comments" :key="comment.id" class="border-b pb-2">
-        <p>
-            <span class="font-semibold text-blue-500 cursor-pointer hover:underline"
-                  @click="router.push(`/dashboard/user/${comment.user.username}`)">
-                {{ comment.user.name }}
-            </span>: {{ comment.body }}
-        </p>
-    </div>
+        <div v-for="comment in comments" :key="comment.id" class="border-b pb-2">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p>
+          <span
+              class="font-semibold text-blue-500 cursor-pointer hover:underline"
+              @click="router.push(`/dashboard/user/${comment.user.username}`)"
+          >
+            {{ comment.user.name }}
+          </span>:
+                        <span v-if="!editingCommentId || editingCommentId !== comment.id">{{ comment.body }}</span>
+                        <textarea v-else v-model="editedCommentBody" class="w-full p-2 border rounded" />
+                    </p>
+                </div>
+                <div v-if="currentUserId === comment.user_id">
+                    <div v-if="editingCommentId === comment.id" class="space-x-2">
+                        <button @click="saveComment(comment)" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-sm">Save</button>
+                        <button @click="cancelEdit()" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-1 px-2 rounded text-sm">Cancel</button>
+                    </div>
+                    <div v-else class="space-x-2">
+                        <button @click="editComment(comment)" class="text-blue-500 hover:text-blue-700 text-sm">Edit</button>
+                        <button @click="deleteComment(comment.id)" class="text-red-500 hover:text-red-700 text-sm">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 </template>

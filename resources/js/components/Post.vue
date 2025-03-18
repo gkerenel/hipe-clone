@@ -3,7 +3,7 @@
     import CommentList from '@/components/CommentList.vue'
     import { PostApi } from '@/services/api/post'
     import router from "@/router";
-    import {ref, watch} from 'vue'
+    import {ref} from 'vue'
 
     const props = defineProps({
         posts: {
@@ -71,7 +71,7 @@
                 </div>
             </div>
             <div v-if="post.user_id === post.user.id" class="relative">
-                <button @click="toggleMenu(post.id)" class="text-gray-600 hover:text-gray-800">
+                <button @click="toggleMenu(post.id)" class="cursor-pointer font-bold p-2 text-gray-600 hover:text-gray-800">
                     ⋮
                 </button>
                 <div v-if="openMenu === post.id" class="absolute right-0 mt-2 w-32 bg-white shadow-md rounded-lg border border-gray-200">
@@ -103,7 +103,7 @@
         </div>
 
         <div v-if="post.showComments" class="space-y-4">
-            <CommentList :comments="post.comments" />
+            <CommentList :current-user-id="post.user_id" :comments="post.comments" />
             <CommentAdd :post_id="post.id" />
         </div>
     </div>
