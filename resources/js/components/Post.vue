@@ -67,7 +67,7 @@
                 </div>
                 <div>
                     <h2 class="font-bold text-lg">@{{ post.user.username }}</h2>
-                    <p class="text-gray-500 text-sm">Posted at {{ new Date(post.updated_at).toLocaleString() }}</p>
+                    <p class="text-gray-500 text-sm">Posted at {{ new Date(post.created_at).toLocaleString() }} {{ (post.created_at == post.updated_at) ? '' : '(Edited)' }}</p>
                 </div>
             </div>
             <div v-if="post.user_id === post.user.id" class="relative">
