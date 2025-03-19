@@ -2,6 +2,7 @@
     import { ref } from 'vue'
     import { useAuthStore } from '@/stores/auth'
     import { AuthApi } from '@/services/api/auth'
+    import router from '@/router'
 
     const username = ref('')
     const email = ref('')
