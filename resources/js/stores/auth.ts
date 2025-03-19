@@ -1,15 +1,15 @@
 import { defineStore } from 'pinia'
 
 export const useAuthStore = defineStore('counter', () => {
-    function set(token): void {
+    function set(token) {
         localStorage.setItem('auth_token', token)
     }
 
-    function clear(): void {
+    function clear() {
         localStorage.removeItem('auth_token')
     }
 
-    function get(): string | null {
+    function get() {
         return localStorage.getItem('auth_token')
     }
 
