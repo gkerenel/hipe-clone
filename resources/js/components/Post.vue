@@ -63,7 +63,7 @@
         <div class="flex items-center justify-between">
             <div class="flex items-center space-x-4">
                 <div class="w-10 h-10 bg-blue-500 text-white flex items-center justify-center rounded-full text-lg font-bold">
-                    {{ post.user.name.split(' ').map(n => n[0]).join('') }}
+                    {{ post.user?.name?.split(' ').map(n => n[0]).join('') ?? '??' }}
                 </div>
                 <div>
                     <h2 class="font-bold text-lg">@{{ post.user.username }}</h2>

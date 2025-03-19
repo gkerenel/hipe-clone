@@ -1,11 +1,11 @@
 
 export interface User {
     id: number,
-    name: string,
+    name?: string,
     username: string,
     email: string,
-    bio: string,
-    followers_count: number,
-    followings_count: number,
-    created_at: Date
+    bio?: string,
+    followers_count?: number,
+    followings_count?: number,
+    created_at?: Date
 }
