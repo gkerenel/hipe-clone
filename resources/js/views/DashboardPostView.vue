@@ -73,12 +73,11 @@
 <template>
     <main class="flex-1 p-8">
         <pre v-show="errors_show" class="bg-red-400 w-full text-white p-2 mb-2">{{ errors }}</pre>
-        <div class="bg-gray-200 p-4 rounded-xl">
+        <div class=" border border-[#2E3044] p-4 rounded-xl">
             <label class="block text-sm font-medium text-gray-500 mb-2">Post</label>
-            <textarea v-model="post.body" @input="onBodyInput" class="w-full bg-transparent focus:outline-none placeholder-gray-600 resize-none" rows="3" placeholder="Tell the world about your thoughts">
-						</textarea>
+            <textarea v-model="post.body" @input="onBodyInput" class="w-full bg-[#151821] border border-[#2E3039] rounded-lg p-3 text-[#E8E8E8] focus:outline-none focus:border-[#4e89f5] min-h-[100px] resize-none" rows="5" placeholder="Tell the world about your thoughts"></textarea>
             <div class="text-right text-sm text-gray-500 mt-2">{{ remaining }}/{{ MAX_BIO_LENGTH }} remaining</div>
         </div>
-        <button @click="onSubmit" class="mt-3 px-5 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors">{{ isCreate ? 'Create Post' : 'Update Post' }}</button>
+        <button @click="onSubmit" class="mt-4 bg-[#4e89f5] text-white border-none rounded px-4 py-2 cursor-pointer text-sm transition-colors duration-300 hover:bg-[#357ae8]">{{ isCreate ? 'Create Post' : 'Update Post' }}</button>
     </main>
 </template>

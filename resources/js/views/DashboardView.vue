@@ -4,7 +4,7 @@
 </script>
 
 <template>
-	<div class="min-h-screen flex">
+	<div class="min-h-screen flex bg-[#0F111A] text-[#A4C2F4]">
 		<DashboardSidebar />
 		<div class="ms-56 w-full">
 			<RouterView />

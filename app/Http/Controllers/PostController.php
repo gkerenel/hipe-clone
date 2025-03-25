@@ -13,9 +13,12 @@ class PostController extends Controller
     public function show(Request $request) : JsonResponse
     {
         $user = $request->user();
-        $posts = $posts = $user->posts()
+        $followingIds = $user->followings()->pluck('following_id');
+
+        $posts = Post::whereIn('user_id', $followingIds->push($user->id))
             ->with(['comments.user', 'user'])
             ->withCount('likes')
+            ->latest()
             ->get()
             ->map(function ($post) use ($user) {
                 $post->is_liked = $post->likes()->where('user_id', $user->id)->exists();

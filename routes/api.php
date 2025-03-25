@@ -29,7 +29,8 @@ Route::controller(ProfileController::class)->group(function () {
 
 Route::controller(UserController::class)->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
-        Route::get('/user/{user}', 'show');
+        Route::get('/user/{user}', 'index');
+        Route::get('/user', 'show');
     });
 });
 
@@ -62,7 +63,8 @@ Route::controller(CommentController::class)->group(function () {
 
 Route::controller(FollowController::class)->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
-        Route::post('/follow/{user}/follow', 'follow');
-        Route::post('/follow/{user}/unfollow', 'unfollow');
+        Route::get('/follow/{user}/follow', 'follow');
+        Route::get('/follow/{user}/unfollow', 'unfollow');
+        Route::get('/follow/{user}', 'isFollowing');
     });
 });

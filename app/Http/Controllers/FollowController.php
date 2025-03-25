@@ -10,46 +10,48 @@ use Illuminate\Http\Request;
 
 class FollowController extends Controller
 {
-    public function follow(Request $request, User $other): JsonResponse | Response
+    public function follow(Request $request, string $username): JsonResponse | Response
     {
-        $user = $request->user();
-        logger('checking follow have:');
-        logger(var_export($other, true));
 
-        if ($user->id === $other->id)
+        $user = $request->user();
+
+        $follow = User::where('username', $username)->first();
+
+        if ($user->id === $follow->id)
         {
             return response()->json([
                 'errors' => ['can not follow yourself']
             ], 422);
         }
 
-        if ($user->isFollowing($other->id))
+        if ($user->isFollowing($follow))
         {
             return response()->json([
                 'errors' => ['already following this user']
             ], 401);
         }
 
-        $follow = Follow::create([
+        Follow::create([
             'follower_id' => $user->id,
-            'following_id' => $other->id
+            'following_id' => $follow->id
         ]);
 
         return response()->noContent();
     }
 
-    public function unfollow(Request $request, User $other): JsonResponse | Response
+    public function unfollow(Request $request, string $username): JsonResponse | Response
     {
         $user = $request->user();
+        $follow = User::where('username', $username)->first();
 
-        if ($user->id === $other->id)
+        if ($user->id === $follow->id)
         {
             return response()->json([
                 'errors' => ['can not unfollow yourself']
             ], 422);
         }
 
-        if (!$user->isFollowing($other->id))
+        if (!$user->isFollowing($follow))
         {
             return response()->json([
                 'errors' => ['you are not following this user']
@@ -58,8 +60,20 @@ class FollowController extends Controller
 
         Follow::where([
             'follower_id' => $user->id,
-            'following_id' => $other->id
+            'following_id' => $follow->id
         ])->delete();
+
+        return response()->noContent();
+    }
+
+    public function isFollowing(Request $request, string $username): JsonResponse | Response
+    {
+        $user = $request->user();
+        $follow = User::where('username', $username)->first();
+
+        if (!$user->isFollowing($follow)) {
+            return response()->json([], 422);
+        }
 
         return response()->noContent();
     }

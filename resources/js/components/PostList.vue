@@ -15,7 +15,7 @@ import {onMounted, ref} from 'vue'
 
 <template>
     <main class="flex-1 p-8 h-min-screen">
-        <div class="bg-white shadow rounded-lg p-3 space-y-6">
+        <div class="shadow rounded-lg p-3 space-y-6">
             <Post :posts="posts" />
         </div>
     </main>

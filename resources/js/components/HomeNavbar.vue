@@ -7,8 +7,8 @@
 		<div class="max-w-7xl mx-auto px-4">
 			<div class="flex justify-between items-center py-3">
 				<div class="flex items-center space-x-2">
-					<img class="w-8 h-8" :src="twitterIcon" alt="Twitter Icon">
-					<span class="text-2xl font-bold text-gray-900">Twitter</span>
+                    <span class="material-symbols-outlined">mobile_hand</span>
+					<span class="text-2xl font-bold text-gray-900">Hipe</span>
 				</div>
 				<div class="flex space-x-4 items-center">
 					<a href="/signin" class="text-gray-600 focus:outline-none hover:text-blue-500 transition-colors">Sign In</a>

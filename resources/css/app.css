@@ -11,3 +11,38 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+:root {
+    --primary-bg: #0F111A;
+    --secondary-bg: #A4C2F4;
+    --text-primary: #A4C2F4;
+    --text-secondary: #E8E8E8;
+    --accent-color: #4e89f5;
+    --hover-bg: #1A1D28;
+    --border-color: #2e3344;
+    --comment-bg: #151821;
+}
+
+.material-symbols-outlined {
+    font-weight: normal;
+    font-style: normal;
+    font-size: 32px !important;  /* Preferred icon size */
+    display: inline-block;
+    line-height: 1;
+    text-transform: none;
+    letter-spacing: normal;
+    word-wrap: normal;
+    white-space: nowrap;
+    direction: ltr;
+
+    /* Support for all WebKit browsers. */
+    -webkit-font-smoothing: antialiased;
+    /* Support for Safari and Chrome. */
+    text-rendering: optimizeLegibility;
+
+    /* Support for Firefox. */
+    -moz-osx-font-smoothing: grayscale;
+
+    /* Support for IE. */
+    font-feature-settings: 'liga';
+}

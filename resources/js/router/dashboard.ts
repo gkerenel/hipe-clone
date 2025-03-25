@@ -19,6 +19,11 @@ export const dashboardRoutes = [
 		'name': 'dashboard_profile',
 		component: () => import('@/views/DashboardProfileView.vue')
 	},
+    {
+        'path': 'explore',
+        'name': 'dashboard_explore',
+        component: () => import('@/views/DashboardExploreView.vue')
+    },
 	{
 		'path': 'update',
 		'name': 'dashboard_update',

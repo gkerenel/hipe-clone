@@ -18,7 +18,7 @@
 
 <template>
     <div class="flex space-x-2 mt-2">
-        <input v-model="comment" type="text" placeholder="Add a comment..." class="flex-1 border rounded px-2 py-1"/>
+        <textarea v-model="comment" type="text" placeholder="Add a comment..." class="w-full border border-[#2E3039] bg-[#151821] text-[#E8E8E8] rounded p-3 text-sm font-inherit transition-colors duration-300 focus:border-[#4e89f5] focus:outline-none resize-none"/>
         <button @click="onSubmit" class="bg-blue-500 text-white px-4 py-1 rounded">Comment</button>
     </div>
 </template>

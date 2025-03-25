@@ -31,7 +31,7 @@
 
 <template>
 	<main class="flex-1 p-8">
-		<div class="bg-white shadow rounded-lg">
+		<div class="rounded-lg">
 			<div class="relative">
 				<div :style="{backgroundColor: getRandomColor()}" class="w-full h-48  rounded-t-lg"></div>
 				<div class="absolute left-6 bottom-[-32px]">
@@ -46,13 +46,13 @@
 				<div class="flex justify-between items-center">
 					<div>
 						<h2 class="text-3xl font-bold">{{ user?.name }}</h2>
-						<p class="text-gray-600">@{{ user?.username }}</p>
+						<p class="text-text">@{{ user?.username }}</p>
 					</div>
-					<button @click="router.push('/dashboard/update')" class="px-5 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors">
+					<button @click="router.push('/dashboard/update')" class="bg-[#4e89f5] text-[#E8E8E8]  border-none rounded px-4 py-2 cursor-pointer text-sm transition-colors duration-300 hover:bg-[#357ae8]">
 						Edit Profile
 					</button>
 				</div>
-				<p class="mt-4 text-gray-800">{{ user?.bio }}</p>
+				<p class="mt-4 text-white font-bold">{{ user?.bio }}</p>
 				<div class="mt-6 flex space-x-8">
 					<div>
 						<span class="font-bold text-xl">{{ user?.followers_count }}</span>
@@ -64,11 +64,11 @@
 					</div>
 				</div>
 			</div>
-            <div v-if="posts" class="bg-white shadow rounded-lg p-3 space-y-6">
+            <div v-if="posts" class="border border-[#2E3044] shadow rounded-lg p-3 space-y-6">
                 <Post :posts="posts" />
             </div>
-            <div v-else class="bg-white shadow rounded-lg p-8 space-y-6">
-                <h2 class="font-bold">you have no posts</h2>
+            <div v-else class="bg-[#0F111A] bg-opacity-95 border-[#2E3044] rounded-lg p-8 space-y-6">
+                <h2 class="font-bold bg-[#0F111A] bg-opacity-95">you have no posts</h2>
             </div>
 		</div>
 	</main>
