@@ -11,6 +11,12 @@ class UserController extends Controller
 {
     public function index(Request $request, string $username): JsonResponse
     {
+        $user = User::where('username', $username)->withCount(['followings', 'followers'])->firstOrFail();
+        return response()->json(['user' => $user]);
+    }
+
+    public function show(Request $request, string $username): JsonResponse
+    {
         $users = User::query()
             ->when(
                 $username,

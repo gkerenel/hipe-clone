@@ -3,7 +3,9 @@
     import CommentList from '@/components/CommentList.vue'
     import { PostApi } from '@/services/api/post'
     import router from "@/router";
-    import {ref} from 'vue'
+    import {onMounted, ref} from 'vue'
+    import {ProfileApi} from "@/services/api/profile";
+    import {User} from "@/interfaces/user";
 
     const props = defineProps({
         posts: {
@@ -11,6 +13,8 @@
             default: null
         }
     })
+
+    const user = ref<User>()
 
     const openMenu = ref(false)
 
@@ -60,6 +64,16 @@
     function getRandomColor() {
         return  `#${Math.floor(Math.random() * 0xFFFFFF).toString(16).padStart(6, '0').toUpperCase()}`
     }
+
+    onMounted(async () => {
+        const responseUser = await ProfileApi.show()
+
+        user.value =
+            responseUser.success ?
+                responseUser.user :
+                { name: "error", username: "error", email: "error", bio: 'error', followers_count: -1, followings_count: -1 }
+
+    })
 </script>
 
 <template>
@@ -71,15 +85,15 @@
                 </div>
                 <div>
                     <h2 v-if="post.user.name" class="font-bold text-[#A4C2F4] mr-1 no-underline hover:underline">{{ post.user?.name }}</h2>
-                    <h2 class="text-[#E8E8E8] font-medium mr-1 no-underline hover:underline">@{{ post.user.username }}</h2>
+                    <a :href="`/dashboard/user/${post.user.username}`" class="text-[#E8E8E8] font-medium mr-1 no-underline hover:underline">@{{ post.user.username }}</a>
                     <p class="text-gray-500 text-sm">Posted at {{ new Date(post.created_at).toLocaleString() }} {{ (post.created_at == post.updated_at) ? '' : '(Edited)' }}</p>
                 </div>
             </div>
-            <div v-if="post.user_id === post.user.id" class="relative">
+            <div v-show="user?.id == post.user.id" class="relative">
                 <button @click="toggleMenu(post.id)" class="cursor-pointer font-bold p-2 text-gray-600 hover:text-gray-800">
                     <span class="material-symbols-outlined">event_list</span>
                 </button>
-                <div v-if="openMenu === post.id" class="absolute right-0 mt-2 w-32 shadow-md rounded-lg border border-[#2e3344]">
+                <div v-if="openMenu == post.id" class="absolute right-0 mt-2 w-32 shadow-md rounded-lg border border-[#2e3344]">
                     <button @click="editPost(post.id, post.body)" class="block w-full text-left px-4 py-2 hover:bg-[#1A1C25]">Edit</button>
                     <button @click="deletePost(post.id)" class="block w-full text-left px-4 py-2 hover:bg-[#1A1C25] text-red-400">Delete</button>
                 </div>

@@ -20,7 +20,7 @@
     }
 
     async function follow(username:string) {
-        if (followStatus.value[username]) {
+        if (followStatus.value) {
             await UserApi.unfollow(username);
             followStatus.value = false;
         } else {
@@ -36,10 +36,9 @@
 
         if (route.params.username) {
             const response = await UserApi.show(route.params.username)
-            console.log(response)
             if (response.success) {
-
                 user.value = response.user
+                console.log(user.value)
                 followStatus.value = await isFollow(user.value?.username);
             }
         }
@@ -69,7 +68,7 @@
                         {{ followStatus ? "Unfollow" : "Follow" }}
                     </button>
                 </div>
-                <p class="mt-4 text-gray-800">{{ user?.bio }}</p>
+                <p class="mt-4 text-white font-bold">{{ user?.bio }}</p>
                 <div class="mt-6 flex space-x-8">
                     <div>
                         <span class="font-bold text-xl">{{ user?.followers_count }}</span>

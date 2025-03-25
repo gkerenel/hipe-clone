@@ -24,16 +24,16 @@ export const UserApi: UserService = {
     async show(username:string): Promise<UserResult> {
         return axios.get(`${BASE_URL}/user/${username}`, {headers: {'Authorization': `Bearer ${TOKEN}`}})
             .then((response) => {
-                return {success: true, user: response.data.users}
+                return {success: true, user: response.data.user }
             })
             .catch((error) => {
                 return {success: false}
             })
     },
     async search(username:string): Promise<UserResult> {
-        return axios.get(`${BASE_URL}/user/${username}`, {headers: {'Authorization': `Bearer ${TOKEN}`}})
+        return axios.get(`${BASE_URL}/user/${username}/search`, {headers: {'Authorization': `Bearer ${TOKEN}`}})
         .then((response) => {
-            return {success: true, user: response.data.users}
+            return {success: true, users: response.data.users}
         })
         .catch((error) => {
             return {success: false}

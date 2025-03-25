@@ -9,6 +9,7 @@ import {onMounted, ref} from 'vue'
         const response = await PostApi.show()
         if (response.success) {
             posts.value = response.posts
+            console.log(posts.value)
         }
     })
 </script>

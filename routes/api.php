@@ -30,6 +30,7 @@ Route::controller(ProfileController::class)->group(function () {
 Route::controller(UserController::class)->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/user/{user}', 'index');
+        Route::get('/user/{user}/search', 'search');
     });
 });
 
