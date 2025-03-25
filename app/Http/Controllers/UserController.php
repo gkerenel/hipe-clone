@@ -18,12 +18,8 @@ class UserController extends Controller
                     $builder->where('name', 'like', "%{$username}%");
                 }
             )->get();
+
         return response()->json(['users' => $users]);
     }
 
-    public function show(Request $request, string $username): JsonResponse
-    {
-        $user = User::where('name', $username)->get();
-        return response()->json(['user' => $user]);
-    }
 }

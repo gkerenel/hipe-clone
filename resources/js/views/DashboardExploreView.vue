@@ -1,9 +1,9 @@
 <script setup lang="ts">
-    import { onMounted, ref } from "vue";
-    import router from "@/router";
+import {computed, onMounted, ref} from "vue";
     import {UserApi} from "@/services/api/user";
     import {User} from "@/interfaces/user";
     const users = ref<User[]>()
+    const followStatus = ref<Record<string, boolean>>({});
     const isSearching = ref(false)
 
     const username = ref<string>('')
@@ -11,24 +11,34 @@
     async function onSubmit() {
         isSearching.value = true
         if (isSearching.value) {
-            const response = await UserApi.show(username.value)
+            const response = await UserApi.search(username.value)
 
             if (response.success) {
                 users.value = response.users
+                await Promise.all(
+                    response.users.map(async (user: User) => {
+                        followStatus.value[user.username] = await isFollow(user.username);
+                    })
+                );
             }
         }
 
         isSearching.value = false
     }
 
-    async function isFollow(username:string) {
-        return (await UserApi.isFollowing(username)).success
+    async function isFollow(username: string): Promise<boolean> {
+        const response = await UserApi.isFollowing(username);
+        return response.success;
     }
+
+
     async function follow(username:string) {
-        if (!(await isFollow(username))) {
-            await UserApi.follow(username)
+        if (followStatus.value[username]) {
+            await UserApi.unfollow(username);
+            followStatus.value[username] = false;
         } else {
-            await UserApi.unfollow(username)
+            await UserApi.follow(username);
+            followStatus.value[username] = true;
         }
     }
 
@@ -43,7 +53,7 @@
 <template>
     <main class="flex-1 p-8">
         <div class=" border border-[#2E3044] p-4 rounded-xl">
-            <input @change="onSubmit" v-model="username" type="text" class="w-full p-3 bg-[#0F111A] border border-[#2E3039] rounded-lg text-[#E0E0E0] mb-6" placeholder="Search users...">
+            <input @input="onSubmit" v-model="username" type="text" class="w-full p-3 bg-[#0F111A] border border-[#2E3039] rounded-lg text-[#E0E0E0] mb-6" placeholder="Search users...">
         </div>
         <div>
             <div v-for="user in users" class="flex items-center space-x-4">
@@ -52,10 +62,10 @@
                 </div>
                 <div>
                     <h2 v-if="user?.name" class="font-bold text-[#A4C2F4] mr-1 no-underline hover:underline">{{ user?.name }}</h2>
-                    <h2 class="text-[#E8E8E8] font-medium mr-1 no-underline hover:underline">@{{ user?.username }}</h2>
-                    <button @click="follow(user?.username)" class="bg-[#4e89f5] text-white border-none rounded px-3 py-2 cursor-pointer text-sm transition-colors duration-300 hover:bg-[#357ae8]">{{
-                            !isFollow(user?.username) ? 'Unfollow' : 'Follow'
-                        }}</button>
+                    <a :href="`/dashboard/user/${user?.username}`" class="text-[#E8E8E8] font-medium mr-1 no-underline hover:underline">@{{ user?.username }}</a>
+                    <button @click="follow(user?.username)" class="bg-[#4e89f5] text-white border-none rounded px-3 py-2 cursor-pointer text-sm transition-colors duration-300 hover:bg-[#357ae8]">
+                        {{ followStatus[user.username] ? "Unfollow" : "Follow" }}
+                    </button>
                 </div>
             </div>
         </div>

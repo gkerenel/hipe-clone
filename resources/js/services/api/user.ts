@@ -5,9 +5,11 @@ import { User } from '@/interfaces/user'
 interface UserResult {
     success: boolean,
     users?: User[],
+    user?: User
 }
 
 interface UserService {
+    show(username:string): Promise<UserResult>,
     search(username:string): Promise<UserResult>,
     follow(username:string): Promise<UserResult>,
     unfollow(username:string): Promise<UserResult>,
@@ -21,8 +23,17 @@ const BASE_URL: string = 'http://127.0.0.1:8000/api'
 export const UserApi: UserService = {
     async show(username:string): Promise<UserResult> {
         return axios.get(`${BASE_URL}/user/${username}`, {headers: {'Authorization': `Bearer ${TOKEN}`}})
+            .then((response) => {
+                return {success: true, user: response.data.users}
+            })
+            .catch((error) => {
+                return {success: false}
+            })
+    },
+    async search(username:string): Promise<UserResult> {
+        return axios.get(`${BASE_URL}/user/${username}`, {headers: {'Authorization': `Bearer ${TOKEN}`}})
         .then((response) => {
-            return {success: true, users: response.data.users}
+            return {success: true, user: response.data.users}
         })
         .catch((error) => {
             return {success: false}
