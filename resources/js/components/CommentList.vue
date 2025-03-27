@@ -4,8 +4,8 @@
     import {PostApi} from "@/services/api/post";
     const router = useRouter()
 
-    defineProps({
-        comments: {
+    const props = defineProps({
+        commentss: {
             type: Object,
             required: true
         },
@@ -13,6 +13,8 @@
             required: true,
         }
     })
+
+    const comments = ref(props.commentss)
 
     const editingCommentId = ref(null);
     const editedCommentBody = ref('');
@@ -34,6 +36,7 @@
 
     async function deleteComment(id) {
         await PostApi.postCommentDelete(id)
+        comments.value = comments.value.filter((comment) => comment.id != id)
     }
 </script>
 

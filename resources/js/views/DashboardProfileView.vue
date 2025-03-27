@@ -60,7 +60,7 @@
 					</div>
 					<div>
 						<span class="font-bold text-xl">{{ user?.followings_count }}</span>
-						<span class="text-gray-600 ml-1">Following</span>
+						<span class="text-gray-600 ml-1">Followings</span>
 					</div>
 				</div>
 			</div>

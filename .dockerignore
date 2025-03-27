@@ -6,7 +6,7 @@ package-lock.json
 /public/build
 /public/hot
 /public/storage
-/storage/
+/storage/*.key
 /storage/pail
 /vendor
 

@@ -1,40 +1,28 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { infoRoutes } from '@/router/info.ts';
-import { dashboardRoutes } from '@/router/dashboard.ts';
-import { useAuthStore } from '@/stores/auth.ts';
-import {authTest} from "@/services/api/auth";
+import { dashboard_routes } from '@/router/dashboard'
+import { auth_routes } from '@/router/auth'
 
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
 	routes: [
 		{
+            name: 'index',
 			path: '/',
-			name: 'home',
-			component: () => import('@/views/HomeView.vue'),
+			component: () => import('@/views/IndexView.vue')
 		},
-		{
-			path: '/signin',
-			name: 'signin',
-			component: () => import('@/views/SigninView.vue'),
-		},
-		{
-			path: '/signup',
-			name: 'signup',
-			component: () => import('@/views/SignupView.vue'),
-		},
-		{
-			path: '/info',
-			name: 'info',
-			component: () => import('@/views/InfoView.vue'),
-			children: infoRoutes
-		},
+        {
+            name: 'auth',
+            path: '/auth',
+            component: () => import('@/views/AuthView.vue'),
+            children: auth_routes
+        },
 		{
 			path: '/dashboard',
 			name: 'dashboard',
 			component: () => import('@/views/DashboardView.vue'),
-			children: dashboardRoutes
+			children: dashboard_routes
 		}
-	],
+	]
 })
 
 export default router

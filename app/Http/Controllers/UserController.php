@@ -5,17 +5,21 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    public function index(Request $request, string $username): JsonResponse
+    public function index(string $username): JsonResponse
     {
         $user = User::where('username', $username)->withCount(['followings', 'followers'])->firstOrFail();
+
+        if (!$user) {
+            abort(404);
+        }
+
         return response()->json(['user' => $user]);
     }
 
-    public function show(Request $request, string $username): JsonResponse
+    public function search(string $username): JsonResponse
     {
         $users = User::query()
             ->when(
@@ -27,5 +31,4 @@ class UserController extends Controller
 
         return response()->json(['users' => $users]);
     }
-
 }

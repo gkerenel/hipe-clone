@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Laravel\Sanctum\HasApiTokens;
 
 
@@ -34,6 +34,13 @@ class User extends Authenticatable
         'updated_at',
     ];
 
+    protected $appends = ['is_followed'];
+
+    public function getIsFollowedAttribute(): bool
+    {
+        return Auth::user() && $this->isFollowed(Auth::user());
+    }
+
     public function posts() : HasMany
     {
         return $this->hasMany(Post::class);
@@ -59,7 +66,7 @@ class User extends Authenticatable
         return $this->followings()->where('following_id', $user->id)->exists();
     }
 
-    public function isFollowed(User $user): bool
+    public function isFollowed($user): bool
     {
         return $this->followings()->where('follower_id', $user->id)->exists();
     }

@@ -2,7 +2,7 @@ import axios from 'axios'
 import { useAuthStore } from '@/stores/auth'
 
 interface AuthResult {
-    success: boolean,
+    success: Boolean,
     token?: string,
     errors?: string[]
 }

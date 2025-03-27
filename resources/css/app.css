@@ -13,20 +13,37 @@
 }
 
 :root {
-    --primary-bg: #0F111A;
-    --secondary-bg: #A4C2F4;
+    --bg-primary: #0F111A;
+    --bg-secondary: #A4C2F4;
     --text-primary: #A4C2F4;
     --text-secondary: #E8E8E8;
     --accent-color: #4e89f5;
-    --hover-bg: #1A1D28;
+    --bg-hover: #1A1D28;
     --border-color: #2e3344;
-    --comment-bg: #151821;
+    --bg-comment: #151821;
+}
+
+@theme {
+    --color-hipe-1: #A4C2F4;
+    --color-hipe-2: #E8E8E8;
+    --color-hipe-3: #4e89f5;
+    --color-hipe-s1:  #0F111A;
+    --color-hipe-s2:  #A4C2F4;
+    --color-hipe-s3: #1A1D28;
+    --color-hipe-s4: #151821;
+    --color-hipe-s5: #2e3344;
+}
+
+
+html, body, #app {
+    width: 100%;
+    height: 100%;
 }
 
 .material-symbols-outlined {
     font-weight: normal;
     font-style: normal;
-    font-size: 32px !important;  /* Preferred icon size */
+    font-size: 32px !important;
     display: inline-block;
     line-height: 1;
     text-transform: none;
@@ -34,15 +51,8 @@
     word-wrap: normal;
     white-space: nowrap;
     direction: ltr;
-
-    /* Support for all WebKit browsers. */
     -webkit-font-smoothing: antialiased;
-    /* Support for Safari and Chrome. */
     text-rendering: optimizeLegibility;
-
-    /* Support for Firefox. */
     -moz-osx-font-smoothing: grayscale;
-
-    /* Support for IE. */
     font-feature-settings: 'liga';
 }

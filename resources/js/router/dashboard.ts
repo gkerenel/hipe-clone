@@ -1,8 +1,8 @@
-export const dashboardRoutes = [
+export const dashboard_routes = [
 	{
-		'path': '',
+		'path': 'home',
 		'name': 'dashboard_home',
-		component: () => import('@/views/DashboardHomeView.vue')
+		component: () => import('@/views/dashboard/HomeView.vue')
 	},
     {
         'path': 'user/:username',
@@ -25,12 +25,12 @@ export const dashboardRoutes = [
         component: () => import('@/views/DashboardExploreView.vue')
     },
 	{
-		'path': 'update',
-		'name': 'dashboard_update',
+		'path': 'update-profile',
+		'name': 'dashboard_update_profile',
 		component: () => import('@/views/DashboardUpdateView.vue')
 	},
     {
-        'path': 'update/password',
+        'path': 'update-password',
         'name': 'dashboard_update_password',
         component: () => import('@/views/DashboardUpdatePasswordView.vue')
     },

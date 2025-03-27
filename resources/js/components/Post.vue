@@ -6,13 +6,15 @@
     import {onMounted, ref} from 'vue'
     import {ProfileApi} from "@/services/api/profile";
     import {User} from "@/interfaces/user";
+    import {retryApi} from "@/services/utils/api";
 
     const props = defineProps({
-        posts: {
-            required: false,
-            default: null
+        modelValue: {
+            type: Array,
         }
     })
+
+    const emits = defineEmits(['update:modelValue'])
 
     const user = ref<User>()
 
@@ -49,11 +51,11 @@
         })
     }
 
-    async function deletePost(post_id) {
-        await PostApi.delete(post_id)
+    async function deletePost(id) {
+        if ((await PostApi.delete(id)).success) {
+            emits('update:modelValue', props.modelValue.filter(post => post.id != id))
+        } else {
 
-        if (props.posts) {
-            props.posts = props.posts.filter(post => post.id = post_id)
         }
     }
 
@@ -66,18 +68,19 @@
     }
 
     onMounted(async () => {
-        const responseUser = await ProfileApi.show()
-
-        user.value =
-            responseUser.success ?
-                responseUser.user :
-                { name: "error", username: "error", email: "error", bio: 'error', followers_count: -1, followings_count: -1 }
-
+        // const response = await retryApi(4, null)
+        //
+        // if (!response.success) {
+        //     await router.push({name: 'index'})
+        // }
+        //
+        //
+        // user.value = response.user
     })
 </script>
 
 <template>
-    <div v-if="posts.length" v-for="post in posts" :key="post.id" class="shadow-lg rounded-2xl p-4 bg-[#0F111A] border border-[#2E3044] shadow-lg transition-transform duration-300 hover:translate-y-[-3px] hover:shadow-xl">
+    <div v-if="modelValue" v-for="post in modelValue" :key="post.id" class="shadow-lg rounded-2xl p-4 bg-[#0F111A] border border-[#2E3044] shadow-lg transition-transform duration-300 hover:translate-y-[-3px] hover:shadow-xl">
         <div class="flex items-center justify-between">
             <div class="flex items-center space-x-4">
                 <div :style="{backgroundColor: getRandomColor()}" class="w-16 h-16 rounded-full flex items-center justify-center text-white text-xl font-bold">
@@ -115,11 +118,11 @@
         </div>
 
         <div v-if="post.showComments" class="space-y-4">
-            <CommentList :current-user-id="post.user_id" :comments="post.comments" />
+            <CommentList :current-user-id="post.user_id" :commentss="post.comments" />
             <CommentAdd :post_id="post.id" />
         </div>
     </div>
-    <div v-else class="bg-[#0F111A] border border-[#2E3044]  rounded-lg p-4 space-y-4">
+    <div v-else class="bg-hipe-s1 border border-hipe-s3  rounded-lg p-4 space-y-4">
         no have posts
     </div>
 </template>
