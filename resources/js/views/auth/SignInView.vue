@@ -20,7 +20,9 @@
         const response = await AuthApi.signin(username.value, password.value)
         if (response.success) {
             useAuthStore().set(response.token)
-            await router.push('/dashboard')
+            await router.push({
+                name: 'dashboard_home'
+            })
         }
         else {
             password.value = ''

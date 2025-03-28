@@ -43,6 +43,6 @@ export const dashboard_routes = [
 	{
 		'path': 'signout',
 		'name': 'dashboard_signout',
-		component: () => import('@/views/DashboardSignoutView.vue')
+		component: () => import('@/views/dashboard/SignOutView.vue')
 	},
 ]

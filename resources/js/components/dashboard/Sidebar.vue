@@ -33,7 +33,7 @@
         <div>
             <RouterLink :to="{name: 'dashboard_signout'}" activeClass="bg-hipe-s5" class="flex items-center p-2 rounded hover:bg-hipe-s3">
                 <span class="material-symbols-outlined">logout</span>
-                <span class="ml-4 text-lg">Profile</span>
+                <span class="ml-4 text-lg">Signout</span>
             </RouterLink>
         </div>
     </aside>
