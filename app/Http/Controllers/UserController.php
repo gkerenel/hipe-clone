@@ -15,7 +15,7 @@ class UserController extends Controller
         return response()->json(['user' => $user]);
     }
 
-    public function show(Request $request, string $username): JsonResponse
+    public function search(string $username): JsonResponse
     {
         $users = User::query()
             ->when(
@@ -27,5 +27,4 @@ class UserController extends Controller
 
         return response()->json(['users' => $users]);
     }
-
 }

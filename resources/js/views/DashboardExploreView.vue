@@ -12,6 +12,7 @@ import {computed, onMounted, ref} from "vue";
         isSearching.value = true
         if (isSearching.value) {
             const response = await UserApi.search(username.value)
+            console.log(response)
 
             if (response.success) {
                 users.value = response.users
@@ -53,7 +54,7 @@ import {computed, onMounted, ref} from "vue";
 <template>
     <main class="flex-1 p-8">
         <div class=" border border-[#2E3044] p-4 rounded-xl">
-            <input @input="onSubmit" v-model="username" type="text" class="w-full p-3 bg-[#0F111A] border border-[#2E3039] rounded-lg text-[#E0E0E0] mb-6" placeholder="Search users...">
+            <input v-model="username" type="text" class="w-full p-3 bg-[#0F111A] border border-[#2E3039] rounded-lg text-[#E0E0E0] mb-6" placeholder="Search users...">
         </div>
         <div>
             <div v-for="user in users" class="flex items-center space-x-4">

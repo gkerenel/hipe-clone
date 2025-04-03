@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Comment;
 use App\Models\Follow;
+use App\Models\Like;
 use App\Models\User;
 use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
@@ -62,6 +64,16 @@ class FollowController extends Controller
             'follower_id' => $user->id,
             'following_id' => $follow->id
         ])->delete();
+
+        Comment::where('user_id', $user->id)
+            ->whereIn('post_id', $follow->posts()->pluck('id'))
+            ->delete();
+
+        Like::where('user_id', $user->id)
+            ->whereIn('post_id', $follow->posts()->pluck('id'))
+            ->delete();
+
+
 
         return response()->noContent();
     }
